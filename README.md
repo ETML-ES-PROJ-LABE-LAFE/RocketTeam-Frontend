@@ -1,4 +1,4 @@
-# todos-project-2024
+# frontend_project
 
 ## Project setup
 ```
