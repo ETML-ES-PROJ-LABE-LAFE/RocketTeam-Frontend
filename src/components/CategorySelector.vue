@@ -1,39 +1,52 @@
 <template>
   <div class="category-selector-container">
     <div class="buttons-container">
-      <button v-for="category in categories" :key="category.id" @click="selectCategory(category)"
+      <button v-for="category in mainCategories" :key="category.id" @click="selectCategory(category)"
               class="category-button" :class="{ 'selected': selectedCategory === category }">
         {{ category.name }}
       </button>
     </div>
-    <select v-if="selectedCategory && subcategories.length > 0" v-model="selectedSubcategory" @change="updateSelectedSubcategory" class="select">
+    <select v-if="selectedCategory && selectedCategory.subcategories && selectedCategory.subcategories.length > 0" v-model="selectedSubcategory" @change="updateSelectedSubcategory" class="select">
       <option disabled value="">Choisissez une sous-catégorie</option>
-      <option v-for="subcat in subcategories" :value="subcat.id" :key="subcat.id">{{ subcat.name }}</option>
+      <option v-for="subcat in selectedCategory.subcategories" :value="subcat.id" :key="subcat.id">{{ subcat.name }}</option>
     </select>
   </div>
 </template>
 
 <script>
+import CategoryServices from "@/Services/CategoryServices.js";
+
 export default {
-  props: ['categories'],
   data() {
     return {
+      mainCategories: [],
       selectedCategory: null,
       selectedSubcategory: null
     };
   },
-  computed: {
-    subcategories() {
-      if (!this.selectedCategory) return [];
-      return this.selectedCategory.subcategories || [];
+  async mounted() {
+    try {
+      const allCategories = await CategoryServices.getAllCategories();
+      this.mainCategories = allCategories.filter(category => !category.parentCategory);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
     }
   },
   methods: {
-    selectCategory(category) {
-      this.selectedCategory = category;
-      this.selectedSubcategory = null; // Utilise `null` pour une réinitialisation claire
-      this.$emit('category-selected', {category: category, filteredLots: category.lots || []});
+    async selectCategory(category) {
+      try {
+        this.selectedCategory = category;
+        // Récupérer les sous-catégories directement à partir de la catégorie parente
+        const subcategories = category.subcategories;
+        this.selectedCategory.subcategories = subcategories;
+        this.selectedSubcategory = null; // Réinitialiser la sous-catégorie sélectionnée
+        // Émettre l'événement avec la catégorie sélectionnée et les sous-catégories
+        this.$emit('category-selected', {category: category, filteredLots: category.lots || []});
+      } catch (error) {
+        console.error('Error fetching subcategories:', error);
+      }
     },
+
 
     updateSelectedSubcategory() {
       this.$emit('subcategory-selected', this.selectedSubcategory);
@@ -41,7 +54,6 @@ export default {
   }
 };
 </script>
-
 
 <style scoped>
 .category-selector-container {
@@ -52,9 +64,9 @@ export default {
 
 .buttons-container {
   display: flex;
-  flex-wrap: wrap; /* Ajouté pour permettre aux boutons de passer à la ligne suivante si nécessaire */
+  flex-wrap: wrap;
   justify-content: center;
-  width: 100%; /* S'assure que le conteneur des boutons utilise toute la largeur possible */
+  width: 100%;
 }
 
 .category-button {
@@ -83,9 +95,8 @@ export default {
   font-size: 16px;
   border: 1px solid #cccccc;
   border-radius: 5px;
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
   background-color: white;
   cursor: pointer;
 }
 </style>
-

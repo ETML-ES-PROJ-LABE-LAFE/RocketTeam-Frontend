@@ -3,7 +3,6 @@
     <p><strong>Numéro de lot:</strong> {{ lot.number }}</p>
     <p><strong>Description:</strong> {{ lot.description }}</p>
     <p><strong>Catégorie:</strong> {{ lot.category }}</p>
-    <p><strong>Sous-catégorie:</strong> {{ lot.sscategory }}</p>
     <p><strong>Valeur initiale:</strong> {{ lot.initialValue }}</p>
     <p><strong>Plus haute enchère:</strong> {{ lot.highestBid }}</p>
   </div>
@@ -16,17 +15,18 @@ export default {
 </script>
 
 <style scoped>
+/* Styles spécifiques pour LotItem */
 .lot {
-  border: 1px solid #ccc;
-  padding: 20px;
-  margin-bottom: 20px;
+  border: 2px solid #007bff;
+  padding: 15px;
+  margin-bottom: 15px;
   background-color: #f9f9f9;
-  border-radius: 10px;
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
-  transition: transform 0.3s ease;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .lot:hover {
-  transform: translateY(-5px);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 </style>
