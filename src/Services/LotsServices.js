@@ -14,7 +14,15 @@ class LotsServices {
         }
     }
 
-    // Autres méthodes pour ajouter, mettre à jour et supprimer des employés peuvent être ajoutées ici
+    async getLotsBySubcategory(subcategoryId) {
+        try {
+            const response = await axios.get(`${BASE_URL}/subcategory/${subcategoryId}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching lots by subcategory:', error);
+            throw new Error('Failed to fetch lots by subcategory');
+        }
+    }
 }
 
 export default new LotsServices();

@@ -1,77 +1,72 @@
 <template>
-  <div class="category-selector-container">
-    <div class="buttons-container">
-      <button v-for="category in mainCategories" :key="category.id" @click="selectCategory(category)"
-              class="category-button" :class="{ 'selected': selectedCategory === category }">
+  <div class="category-selector">
+    <div class="main-categories">
+      <button v-for="category in mainCategories" :key="category.id" @click="selectMainCategory(category)" :class="{ 'selected': selectedMainCategory && selectedMainCategory.id === category.id }">
         {{ category.name }}
       </button>
     </div>
-    <select v-if="selectedCategory && selectedCategory.subcategories && selectedCategory.subcategories.length > 0" v-model="selectedSubcategory" @change="updateSelectedSubcategory" class="select">
-      <option disabled value="">Choisissez une sous-catégorie</option>
-      <option v-for="subcat in selectedCategory.subcategories" :value="subcat.id" :key="subcat.id">{{ subcat.name }}</option>
+    <select v-if="selectedMainCategory" v-model="selectedSubcategory">
+      <option value="">Select a subcategory</option>
+      <option v-for="subcategory in subcategories" :key="subcategory.id" :value="subcategory.id">{{ subcategory.name }}</option>
     </select>
   </div>
 </template>
 
 <script>
-import CategoryServices from "@/Services/CategoryServices.js";
+import CategoryServices from '@/Services/CategoryServices.js';
 
 export default {
   data() {
     return {
       mainCategories: [],
-      selectedCategory: null,
-      selectedSubcategory: null
+      selectedMainCategory: null,
+      selectedSubcategory: '',
+      subcategories: [] // Ajout d'un nouveau tableau pour stocker les sous-catégories de la catégorie principale sélectionnée
     };
   },
   async mounted() {
-    try {
-      const allCategories = await CategoryServices.getAllCategories();
-      this.mainCategories = allCategories.filter(category => !category.parentCategory);
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-    }
+    this.fetchMainCategories();
   },
   methods: {
-    async selectCategory(category) {
+    async fetchMainCategories() {
       try {
-        this.selectedCategory = category;
-        // Récupérer les sous-catégories directement à partir de la catégorie parente
-        const subcategories = category.subcategories;
-        this.selectedCategory.subcategories = subcategories;
-        this.selectedSubcategory = null; // Réinitialiser la sous-catégorie sélectionnée
-        // Émettre l'événement avec la catégorie sélectionnée et les sous-catégories
-        this.$emit('category-selected', {category: category, filteredLots: category.lots || []});
+        const allCategories = await CategoryServices.getAllCategories();
+        this.mainCategories = allCategories.filter(category => !category.parentCategory);
+      } catch (error) {
+        console.error('Error fetching main categories:', error);
+      }
+    },
+    selectMainCategory(category) {
+      this.selectedMainCategory = category;
+      this.selectedSubcategory = ''; // Clear subcategory selection when main category changes
+      this.fetchSubcategories(category.id); // Fetch subcategories associated with the selected main category
+    },
+    async fetchSubcategories(parentCategoryId) {
+      try {
+        const allCategories = await CategoryServices.getAllCategories();
+        this.subcategories = allCategories.filter(category => category.parentCategory && category.parentCategory.id === parentCategoryId);
       } catch (error) {
         console.error('Error fetching subcategories:', error);
       }
     },
-
-
-    updateSelectedSubcategory() {
-      this.$emit('subcategory-selected', this.selectedSubcategory);
-    },
-  }
+  },
 };
 </script>
 
 <style scoped>
-.category-selector-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.category-selector {
+  margin-bottom: 20px;
 }
 
-.buttons-container {
+.main-categories {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  width: 100%;
 }
 
-.category-button {
-  margin: 5px;
-  padding: 10px 15px;
+.main-categories button {
+  margin-right: 10px;
+  margin-bottom: 10px;
+  padding: 5px 10px;
   font-size: 16px;
   background-color: #f0f0f0;
   border: none;
@@ -80,23 +75,17 @@ export default {
   transition: background-color 0.3s ease;
 }
 
-.category-button.selected, .category-button:hover {
+.main-categories button.selected {
   background-color: #007bff;
   color: white;
 }
 
 .select {
-  display: block;
-  margin-top: 20px;
-  width: 100%;
-  max-width: 300px;
-  height: 40px;
+  margin-top: 10px;
   padding: 5px 10px;
   font-size: 16px;
-  border: 1px solid #cccccc;
+  border: 1px solid #ccc;
   border-radius: 5px;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-  background-color: white;
   cursor: pointer;
 }
 </style>
