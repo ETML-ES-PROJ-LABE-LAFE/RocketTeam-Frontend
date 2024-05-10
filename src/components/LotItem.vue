@@ -1,8 +1,7 @@
 <!-- LotItem.vue -->
 <template>
   <div class="lot-item">
-    <!-- Display lot details -->
-    <p>{{ lot.name }}</p>
+    <p>{{ lot.name }}</p> <!-- Assure-toi que les objets lot ont une propriété 'name' -->
     <p>{{ lot.description }}</p>
   </div>
 </template>

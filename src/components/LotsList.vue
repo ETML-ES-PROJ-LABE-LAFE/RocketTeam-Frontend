@@ -1,16 +1,17 @@
 <template>
-  <div class="lots-list">
-    <!-- Loop through lots and display LotItem for each -->
-    <LotItem v-for="lot in lots" :key="lot.id" :lot="lot" />
-  </div>
+  <ul class="lots-list">
+    <li v-for="lot in lots" :key="lot.id">
+      <LotItem :lot="lot" />
+    </li>
+  </ul>
 </template>
 
 <script>
-import LotItem from './LotItem.vue';
+import LotItem from './LotItem.vue';  // Assure-toi que le chemin est correct
 
 export default {
   components: {
-    LotItem,
+    LotItem
   },
   props: {
     lots: {
@@ -21,9 +22,13 @@ export default {
 };
 </script>
 
-
-<style scoped>
+<style>
 .lots-list {
-  margin-top: 20px;
+  list-style-type: none;
+  padding: 0;
+}
+.lots-list li {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
 }
 </style>
