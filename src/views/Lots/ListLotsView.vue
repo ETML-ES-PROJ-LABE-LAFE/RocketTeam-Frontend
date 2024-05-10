@@ -12,6 +12,7 @@
 </template>
 
 <script>
+//import components and Services
 import LotList from "@/components/LotsList.vue";
 import LotsService from "@/Services/LotsServices.js";
 import LotsCategory from "@/Services/CategoryServices.js";
