@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import LotItem from './LotItem.vue';  // Assure-toi que le chemin est correct
+import LotItem from './LotItem.vue';
 
 export default {
   components: {
@@ -22,11 +22,12 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .lots-list {
   list-style-type: none;
   padding: 0;
 }
+
 .lots-list li {
   padding: 10px;
   border-bottom: 1px solid #ccc;
