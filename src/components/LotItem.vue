@@ -1,10 +1,25 @@
 <template>
   <div class="lot-item">
-    <p>Numéro de lot: {{ lot.id }}</p>
-    <p>Description: {{ lot.description }}</p>
-    <p>Catégorie: {{ lot.category.name }}</p>
-    <p>Valeur initiale: {{ lot.initialPrice }}</p>
-    <p>Offre la plus élevée: {{ lot.highestBid }}</p>
+    <div class="lot-attribute">
+      <strong class="attribute-name">Numéro de lot:</strong>
+      <span class="attribute-value">{{ lot.id }}</span>
+    </div>
+    <div class="lot-attribute">
+      <strong class="attribute-name">Description:</strong>
+      <span class="attribute-value">{{ lot.description }}</span>
+    </div>
+    <div class="lot-attribute">
+      <strong class="attribute-name">Catégorie:</strong>
+      <span class="attribute-value">{{ lot.category.name }}</span>
+    </div>
+    <div class="lot-attribute">
+      <strong class="attribute-name">Valeur initiale:</strong>
+      <span class="attribute-value">{{ lot.initialPrice }}</span>
+    </div>
+    <div class="lot-attribute">
+      <strong class="attribute-name">Offre la plus élevée:</strong>
+      <span class="attribute-value">{{ lot.highestBid }}</span>
+    </div>
   </div>
 </template>
 
@@ -24,14 +39,38 @@ export default {
 
 <style scoped>
 .lot-item {
-  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
   background-color: #f9f9f9;
+  width: 30%;
+  min-width: 250px;
+  max-width: 400px;
+  margin: 15px auto; /* Augmente la marge verticale pour centrer entre les barres */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.lot-item p {
-  margin: 5px 0;
+.lot-item:hover {
+  transform: translateY(-10px); /* Déplace l'item légèrement vers le haut */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Ombre plus prononcée pour un effet de soulèvement */
+}
+
+.lot-attribute {
+  display: flex;
+  justify-content: space-between;
+  width: 100%; /* Utilise toute la largeon pour l'alignement */
+}
+
+.attribute-name {
+  margin-right: 10px; /* Espacement entre le nom et la valeur */
+  font-weight: bold;
+}
+
+.attribute-value {
+  text-align: right; /* Alignement du texte à droite pour la valeur */
 }
 </style>

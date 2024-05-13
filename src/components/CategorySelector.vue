@@ -58,5 +58,53 @@ export default {
 </script>
 
 <style scoped>
-/* Styles ici */
+.category-selector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.main-categories {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.main-categories button {
+  border: 1px solid #ccc;
+  border-radius: 15px;
+  padding: 10px 20px;
+  margin: 5px;
+  background-color: white;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.main-categories button:hover,
+.main-categories button.selected {
+  background-color: #3498db;
+  color: white;
+}
+
+select {
+  margin-top: 10px;
+  width: 50%; /* Contrôle la largeur pour la garder centrée */
+  padding: 10px 20px; /* Assure un padding similaire aux boutons pour uniformité */
+  border-radius: 15px; /* Bords arrondis comme les boutons */
+  border: 1px solid #ccc; /* Bordure similaire à celle des boutons */
+  background-color: white; /* Fond blanc */
+  cursor: pointer; /* Indique que c'est un élément interactif */
+  outline: none; /* Supprime l'outline par défaut lors de la sélection */
+  transition: background-color 0.3s, border-color 0.3s; /* Transition douce pour les interactions */
+}
+
+select:hover {
+  background-color: #ecf0f1; /* Légère modification de couleur au survol pour un feedback visuel */
+  border-color: #bdc3c7; /* Changement de la couleur de bordure au survol */
+}
+
+select:focus {
+  border-color: #3498db; /* Bordure bleue lors de la focus pour indiquer l'élément actif */
+}
 </style>

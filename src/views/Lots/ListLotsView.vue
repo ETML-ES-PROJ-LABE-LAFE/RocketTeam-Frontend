@@ -68,5 +68,25 @@ export default {
 </script>
 
 <style>
-/* Styles ici */
+.lots-background {
+  width: 100%; /* Assure que le conteneur prend toute la largeur */
+  padding: 20px 0; /* Ajoute un peu d'espace vertical autour du contenu */
+  background-color: #fff; /* Couleur bleue uniforme, comme les boutons */
+  color: black; /* Texte en blanc pour un meilleur contraste */
+}
+
+.center-container {
+  background-color: #fff; /* Arrière-plan blanc pour les contenus au centre */
+  padding: 20px;
+  border-radius: 10px; /* Bords légèrement arrondis */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Ombre légère pour un effet de profondeur */
+  margin: auto; /* Centrage horizontal */
+  width: 90%; /* Largeur du conteneur central */
+  max-width: 1100px; /* Limite la largeur maximale pour de grands écrans */
+}
+
+h2, p {
+  text-align: center; /* Centrage du texte pour le titre et la description */
+  margin-bottom: 10px; /* Ajoute un peu d'espace en dessous pour une meilleure séparation visuelle */
+}
 </style>
