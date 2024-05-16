@@ -7,7 +7,7 @@
       </button>
     </div>
     <select v-if="selectedMainCategory" v-model="selectedSubcategory" @change="handleSubcategoryChange">
-      <option value="">Sélectionnez une sous-catégorie</option>
+      <option value="" disabled selected>Sélectionnez une sous-catégorie</option>
       <option v-for="subcategory in subcategories" :key="subcategory.id" :value="subcategory.id">{{ subcategory.name }}</option>
     </select>
   </div>
