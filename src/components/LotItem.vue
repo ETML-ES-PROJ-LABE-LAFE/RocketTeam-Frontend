@@ -49,28 +49,28 @@ export default {
   width: 30%;
   min-width: 250px;
   max-width: 400px;
-  margin: 15px auto; /* Augmente la marge verticale pour centrer entre les barres */
+  margin: 15px auto;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .lot-item:hover {
-  transform: translateY(-10px); /* Déplace l'item légèrement vers le haut */
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Ombre plus prononcée pour un effet de soulèvement */
+  transform: translateY(-10px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .lot-attribute {
   display: flex;
   justify-content: space-between;
-  width: 100%; /* Utilise toute la largeon pour l'alignement */
+  width: 100%;
 }
 
 .attribute-name {
-  margin-right: 10px; /* Espacement entre le nom et la valeur */
+  margin-right: 10px;
   font-weight: bold;
 }
 
 .attribute-value {
-  text-align: right; /* Alignement du texte à droite pour la valeur */
+  text-align: right;
 }
 </style>

@@ -89,7 +89,7 @@ export default {
 
 select {
   margin-top: 10px;
-  width: 50%; /* Contrôle la largeur pour la garder centrée */
+  width: auto; /* Augmenter la largeur pour éviter la troncation */
   padding: 10px 20px; /* Assure un padding similaire aux boutons pour uniformité */
   border-radius: 15px; /* Bords arrondis comme les boutons */
   border: 1px solid #ccc; /* Bordure similaire à celle des boutons */
@@ -97,6 +97,10 @@ select {
   cursor: pointer; /* Indique que c'est un élément interactif */
   outline: none; /* Supprime l'outline par défaut lors de la sélection */
   transition: background-color 0.3s, border-color 0.3s; /* Transition douce pour les interactions */
+}
+
+select option {
+  font-size: 16px; /* Ajuste la taille de la police si nécessaire */
 }
 
 select:hover {

@@ -38,35 +38,36 @@ export default {
 <style>
 .home {
   font-family: 'Arial', sans-serif;
-  padding: 0 20px; /* Supprime le padding vertical mais garde un padding horizontal */
+  padding: 10px 20px;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* Alignement au début pour réduire l'espace en haut */
+  justify-content: center;
   min-height: 100vh;
-  background-color: #f4f4f9;
+  background: linear-gradient(to bottom right, #3498db, #bdc3c7);
+  color: white;
 }
 
 .logo {
   width: 150px;
   height: auto;
-  margin-top: 20px; /* Réduit ou ajuste cette marge pour diminuer l'espace au-dessus du logo */
-  margin-bottom: 10px;
+  margin: 10px 0;
 }
 
 h1 {
-  margin-top: 0; /* Élimine la marge au-dessus du titre */
-  margin-bottom: 10px;
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 2.5em;
 }
 
 p {
-  font-size: 18px;
-  color: #555;
-  margin-top: 0; /* Élimine la marge au-dessus du premier paragraphe */
-  margin-bottom: 10px;
+  font-size: 23px;
+  margin-top: 0;
+  margin-bottom: 15px;
   line-height: 1.6;
   max-width: 800px;
   text-align: justify;
+
 }
 </style>

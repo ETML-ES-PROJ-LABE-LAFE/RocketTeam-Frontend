@@ -3,7 +3,6 @@ import axios from 'axios';
 const BASE_URL = "http://localhost:8080/lots";
 
 class LotsServices {
-
     async getAllLots() {
         try {
             const response = await axios.get(BASE_URL);
@@ -11,6 +10,16 @@ class LotsServices {
         } catch (error) {
             console.error('Error fetching lots:', error);
             throw new Error('Failed to fetch lots');
+        }
+    }
+
+    async getLotById(lotId) {
+        try {
+            const response = await axios.get(`${BASE_URL}/${lotId}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching lot by ID:', error);
+            throw new Error('Failed to fetch lot by ID');
         }
     }
 

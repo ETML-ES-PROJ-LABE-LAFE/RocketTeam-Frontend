@@ -3,7 +3,7 @@
   <div class="lots-background">
     <div class="center-container">
       <h2>Sélection des lots</h2>
-      <p>Veuillez sélectionner la catégorie principale de lots que vous voulez consulter</p>
+      <p class="centered-text">Veuillez sélectionner la catégorie principale de lots que vous voulez consulter</p>
       <div class="center-items">
         <CategorySelector :categories="categories" v-model="selectedCategory" @subcategory-selected="handleSubcategorySelected" />
       </div>
@@ -86,18 +86,25 @@ export default {
 .lots-background {
   width: 100%;
   padding: 20px 0;
-  background-color: #fff;
-  color: black;
+  background: linear-gradient(to bottom right, #3498db, #bdc3c7); /* Dégradé bleu et gris */
+  color: white; /* Assure que le texte soit blanc pour la lisibilité */
+  min-height: 100vh; /* Assure que la vue prend toute la hauteur de la fenêtre */
 }
 
 .center-container {
-  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.9); /* Fond blanc semi-transparent pour améliorer la lisibilité */
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   margin: auto;
   width: 90%;
   max-width: 1100px;
+}
+
+.center-items {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .error-popup {
@@ -116,8 +123,36 @@ export default {
   text-align: center;
 }
 
-h2, p {
+h2 {
+  color: white; /* Texte en blanc pour le contraste */
   text-align: center;
   margin-bottom: 10px;
+}
+
+.centered-text {
+  text-align: center;
+  color: white; /* Texte en blanc pour le contraste */
+  margin: 0 auto 10px;
+}
+
+.main-categories button {
+  border: 1px solid #ccc;
+  border-radius: 15px;
+  padding: 10px 20px;
+  margin: 5px;
+  background-color: white;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  color: black; /* Texte en noir pour les boutons */
+}
+
+.main-categories button:hover,
+.main-categories button.selected {
+  background-color: #3498db;
+  color: white; /* Texte en blanc pour les boutons sélectionnés */
+}
+
+.lots-list li {
+  color: black; /* Texte en noir pour le contraste */
 }
 </style>

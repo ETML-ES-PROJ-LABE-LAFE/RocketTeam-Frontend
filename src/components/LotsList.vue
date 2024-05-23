@@ -1,6 +1,6 @@
 <template>
   <ul class="lots-list">
-    <li v-for="lot in lots" :key="lot.id">
+    <li v-for="lot in lots" :key="lot.id" @click="goToEnchere(lot.id)">
       <LotItem :lot="lot" />
     </li>
   </ul>
@@ -19,18 +19,24 @@ export default {
       required: true,
     },
   },
+  methods: {
+    goToEnchere(lotId) {
+      this.$router.push({ name: 'enchere', params: { id: lotId } });
+    }
+  }
 };
 </script>
 
 <style scoped>
 .lots-list li {
-  padding: 10px; /* Ajuste le padding si nécessaire pour aligner avec les barres */
-  border-bottom: 1px solid #ccc; /* Vérifie si cette bordure est l'origine des barres blanches */
-  list-style-type: none; /* Enlève les puces de liste */
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  list-style-type: none;
+  cursor: pointer;
 }
 
 .lots-list {
   padding: 0;
-  margin: 0; /* Assure-toi qu'il n'y ait pas de marge externe ajoutant un espace indésirable */
+  margin: 0;
 }
 </style>
