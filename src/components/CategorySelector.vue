@@ -1,4 +1,3 @@
-<!-- CategorySelector.vue -->
 <template>
   <div class="category-selector">
     <div class="main-categories">

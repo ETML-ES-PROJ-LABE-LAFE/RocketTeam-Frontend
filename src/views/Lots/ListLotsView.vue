@@ -1,4 +1,3 @@
-<!-- ListLotsView.vue -->
 <template>
   <div class="lots-background">
     <div class="center-container">
@@ -94,7 +93,7 @@ export default {
   background-color: #fff;
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   margin: auto;
   width: 90%;
   max-width: 1100px;
@@ -110,7 +109,7 @@ export default {
   padding: 15px 30px;
   border: 1px solid #f5c6cb;
   border-radius: 5px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3); /* Ombre plus prononcée pour un meilleur contraste */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Ombre plus prononcée pour un meilleur contraste */
   z-index: 1050; /* Assurez-vous que le z-index soit assez haut pour être au-dessus des autres éléments */
   max-width: 90%; /* Limite la largeur pour éviter que le pop-up ne soit trop large */
   text-align: center;

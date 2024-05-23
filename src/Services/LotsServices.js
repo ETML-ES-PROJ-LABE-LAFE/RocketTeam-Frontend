@@ -16,7 +16,7 @@ class LotsServices {
 
     async getLotsBySubcategory(subcategoryId) {
         try {
-            const response = await axios.get(`http://localhost:8080/categories/${subcategoryId}/lots`);
+            const response = await axios.get(`${BASE_URL}/categories/${subcategoryId}/lots`);
             return response.data;
         } catch (error) {
             console.error('Error fetching lots by subcategory:', error);
