@@ -44,7 +44,6 @@ export default {
   async created() {
     try {
       this.categories = await CategoryService.getAllCategories();
-      console.log("Fetched categories:", this.categories); // Log fetched categories
       if (this.categories.length === 0) {
         throw new Error("Aucune catégorie disponible");
       }
@@ -72,7 +71,6 @@ export default {
       try {
         if (this.selectedUser) {
           this.lots = await LotsService.getLotsBySubcategoryAndCustomer(this.selectedSubcategory, this.selectedUser);
-          console.log("Fetched lots for subcategory", this.selectedSubcategory, "and customer", this.selectedUser, ":", this.lots); // Log fetched lots
           if (this.lots.length === 0) {
             throw new Error("Aucun lot trouvé pour cette sous-catégorie et cet utilisateur");
           }

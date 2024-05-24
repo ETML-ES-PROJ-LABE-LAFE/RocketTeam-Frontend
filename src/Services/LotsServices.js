@@ -18,7 +18,6 @@ class LotsServices {
     async getLotById(lotId) {
         try {
             const response = await axios.get(`${BASE_URL}/${lotId}`);
-            console.log("getLotById response for id", lotId, ":", response.data); // Log response
             return response.data;
         } catch (error) {
             console.error('Error fetching lot by ID:', error);
@@ -29,7 +28,6 @@ class LotsServices {
     async getLotsBySubcategory(subcategoryId) {
         try {
             const response = await axios.get(`${BASE_URL}/categories/${subcategoryId}/lots`);
-            console.log("getLotsBySubcategory response for subcategory", subcategoryId, ":", response.data); // Log response
             return response.data;
         } catch (error) {
             console.error('Error fetching lots by subcategory:', error);
@@ -42,7 +40,6 @@ class LotsServices {
             const response = await axios.put(`${BASE_URL}/${lotId}/placeBid`, null, {
                 params: {bidAmount}
             });
-            console.log("placeBid response for id", lotId, "with amount", bidAmount, ":", response.data); // Log response
             return response.data;
         } catch (error) {
             console.error('Error placing bid:', error);
@@ -53,7 +50,6 @@ class LotsServices {
     async removeLot(lotId) {
         try {
             await axios.delete(`${BASE_URL}/${lotId}/remove`);
-            console.log("removeLot response for id", lotId); // Log response
         } catch (error) {
             console.error('Error removing lot:', error);
             throw new Error('Failed to remove lot');

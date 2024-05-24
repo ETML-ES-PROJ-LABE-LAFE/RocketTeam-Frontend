@@ -7,7 +7,6 @@ class UserService {
     async getAllUsers() {
         try {
             const response = await axios.get(BASE_URL);
-            console.log('Fetched users:', response.data); // Log to check if all users are fetched
             return response.data;
         } catch (error) {
             console.error('Error fetching users:', error);

@@ -29,7 +29,6 @@ export default {
   async created() {
     try {
       this.users = await UserService.getAllUsers();
-      console.log("Fetched users:", this.users); // Log to check if all users are fetched
       this.selectedUser = UserService.getSelectedUser();
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -39,14 +38,12 @@ export default {
     selectedUser(newValue) {
       if (newValue) {
         UserService.setSelectedUser(newValue);
-        console.log('Selected user ID:', newValue);
       }
     }
   },
   methods: {
     userChanged() {
       UserService.setSelectedUser(this.selectedUser);
-      console.log('Selected user ID:', this.selectedUser);
       // Optionally, trigger an event or action based on user change
     }
   }
