@@ -4,7 +4,7 @@
       <h2>Gestion des Lots</h2>
       <div class="button-group">
         <button @click="mode = 'add'">Ajouter un Lot</button>
-        <button @click="mode = 'remove'">Enlever un Lot</button>
+        <button @click="mode = 'remove'">Gérer les Lots</button>
       </div>
       <div v-if="mode === 'add'">
         <form @submit.prevent="handleSubmit">
@@ -32,7 +32,7 @@
         </form>
       </div>
       <div v-if="mode === 'remove'">
-        <LotsList :lots="lots" :showDeleteButton="true" @delete-lot="confirmDeleteLot" />
+        <LotsList :lots="lots" :showDeleteButton="true" :showEndAuctionButton="true" @delete-lot="confirmDeleteLot" @end-auction="endAuction" />
       </div>
     </div>
     <div v-if="error" class="error-popup">{{ error }}</div>
@@ -122,6 +122,15 @@ export default {
         this.displayMessage('success', "Lot supprimé avec succès");
       } catch (error) {
         this.displayMessage('error', "Erreur lors de la suppression du lot");
+      }
+    },
+    async endAuction(lotId) {
+      try {
+        await LotsService.endAuction(lotId);
+        await this.fetchLots();
+        this.displayMessage('success', "Les enchères pour ce lot sont terminées");
+      } catch (error) {
+        this.displayMessage('error', "Erreur lors de la fin des enchères pour ce lot");
       }
     },
     resetForm() {

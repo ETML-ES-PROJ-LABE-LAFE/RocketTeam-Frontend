@@ -50,6 +50,15 @@ class LotsServices {
             throw new Error('Failed to delete lot');
         }
     }
+    async endAuction(lotId) {
+        try {
+            const response = await axios.put(`${BASE_URL}/${lotId}/endAuction`);
+            return response.data;
+        } catch (error) {
+            console.error('Error ending auction:', error);
+            throw new Error('Failed to end auction');
+        }
+    }
 }
 
 export default new LotsServices();

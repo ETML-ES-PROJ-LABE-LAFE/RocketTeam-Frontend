@@ -1,8 +1,13 @@
 <template>
   <div>
     <ul class="lots-list">
-      <li v-for="lot in paginatedLots" :key="lot.id" @click="goToEnchere(lot.id)">
-        <LotItem :lot="lot" :showDeleteButton="showDeleteButton" @delete-lot="$emit('delete-lot', lot.id)" />
+      <li v-for="lot in paginatedLots" :key="lot.id">
+        <div @click="goToEnchere(lot.id)">
+          <LotItem :lot="lot" :showDeleteButton="showDeleteButton" @delete-lot="$emit('delete-lot', lot.id)" />
+          <button v-if="showEndAuctionButton"
+                  :disabled="disabledButtons.includes(lot.id)"
+                  @click.stop="endAuction(lot.id)">Terminer les enchères</button>
+        </div>
       </li>
     </ul>
     <div class="pagination">
@@ -15,6 +20,7 @@
 
 <script>
 import LotItem from './LotItem.vue';
+import LotsService from "@/Services/LotsServices.js";
 
 export default {
   components: {
@@ -28,12 +34,17 @@ export default {
     showDeleteButton: {
       type: Boolean,
       default: false
+    },
+    showEndAuctionButton: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
       currentPage: 1,
-      itemsPerPage: 10
+      itemsPerPage: 10,
+      disabledButtons: [] // Liste pour suivre les boutons désactivés
     };
   },
   computed: {
@@ -48,8 +59,8 @@ export default {
   },
   methods: {
     goToEnchere(lotId) {
-      if (!this.showDeleteButton) {
-        this.$router.push({name: 'enchere', params: {id: lotId}});
+      if (!this.showDeleteButton && !this.showEndAuctionButton) {
+        this.$router.push({ name: 'enchere', params: { id: lotId } });
       }
     },
     nextPage() {
@@ -60,6 +71,17 @@ export default {
     prevPage() {
       if (this.currentPage > 1) {
         this.currentPage--;
+      }
+    },
+    async endAuction(lotId) {
+      try {
+        this.disabledButtons.push(lotId); // Désactiver le bouton
+        await LotsService.endAuction(lotId);
+        this.$emit('end-auction', lotId);
+      } catch (error) {
+        console.error('Error ending auction:', error);
+        // Réactiver le bouton en cas d'erreur
+        this.disabledButtons = this.disabledButtons.filter(id => id !== lotId);
       }
     }
   }
