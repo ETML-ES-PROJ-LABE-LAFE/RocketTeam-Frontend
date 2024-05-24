@@ -32,7 +32,7 @@
         </form>
       </div>
       <div v-if="mode === 'remove'">
-        <LotsList :lots="lots" :showDeleteButton="true" :showEndAuctionButton="true" @delete-lot="confirmDeleteLot" @end-auction="endAuction" />
+        <LotsList :lots="filteredLots" :showDeleteButton="true" :showEndAuctionButton="true" @delete-lot="confirmDeleteLot" @end-auction="endAuction" />
       </div>
     </div>
     <div v-if="error" class="error-popup">{{ error }}</div>
@@ -44,6 +44,7 @@
 import LotsList from "@/components/LotsList.vue";
 import LotsService from "@/Services/LotsServices.js";
 import CategoryService from "@/Services/CategoryServices.js";
+import UserService from "@/Services/UserService.js";
 
 export default {
   components: {
@@ -63,10 +64,12 @@ export default {
       selectedMainCategory: null,
       mode: null,
       error: null,
-      success: null
+      success: null,
+      selectedUser: null
     };
   },
   async created() {
+    this.selectedUser = UserService.getSelectedUser();
     await this.fetchCategories();
     await this.fetchLots();
   },
@@ -76,6 +79,14 @@ export default {
         this.mainCategories = newCategories.filter(cat => !cat.parentCategory);
       },
       immediate: true
+    }
+  },
+  computed: {
+    filteredLots() {
+      if (this.mode === 'remove') {
+        return this.lots.filter(lot => lot.customer && lot.customer.id === this.selectedUser);
+      }
+      return this.lots;
     }
   },
   methods: {
@@ -102,6 +113,7 @@ export default {
     },
     async handleSubmit() {
       try {
+        this.localLot.customer = { id: this.selectedUser };
         await LotsService.addLot(this.localLot);
         await this.fetchLots();
         this.displayMessage('success', "Lot ajouté avec succès");

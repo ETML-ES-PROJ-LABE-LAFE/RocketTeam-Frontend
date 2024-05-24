@@ -3,7 +3,6 @@ import axios from 'axios';
 const BASE_URL = "http://localhost:8080/users";
 
 class UserService {
-
     async getAllUsers() {
         try {
             const response = await axios.get(BASE_URL);
@@ -15,10 +14,13 @@ class UserService {
     }
 
     getSelectedUser() {
-        return localStorage.getItem('selectedUser');
+        const selectedUser = localStorage.getItem('selectedUser');
+        console.log('Selected user from localStorage:', selectedUser); // Log the selected user
+        return selectedUser;
     }
 
     setSelectedUser(userId) {
+        console.log('Setting selected user to localStorage:', userId); // Log the user being set
         localStorage.setItem('selectedUser', userId);
     }
 }

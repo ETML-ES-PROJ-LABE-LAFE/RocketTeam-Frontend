@@ -29,7 +29,24 @@ export default {
   async created() {
     try {
       this.users = await UserService.getAllUsers();
+      console.log("Fetched users:", this.users); // Log the fetched users
+
+      // Check if users array is correctly populated
+      if (this.users.length === 0) {
+        console.error('No users fetched from backend.');
+      } else {
+        this.users.forEach(user => {
+          console.log(`User: ${user.customername} (ID: ${user.id})`);
+        });
+      }
+
       this.selectedUser = UserService.getSelectedUser();
+      if (this.selectedUser) {
+        const selectedUserName = this.users.find(user => user.id === Number(this.selectedUser))?.customername;
+        console.log("Selected user on created:", this.selectedUser, selectedUserName); // Log the selected user on created
+      } else {
+        console.log("No user selected on created");
+      }
     } catch (error) {
       console.error('Error fetching users:', error);
     }
@@ -38,6 +55,8 @@ export default {
     selectedUser(newValue) {
       if (newValue) {
         UserService.setSelectedUser(newValue);
+        const selectedUserName = this.users.find(user => user.id === Number(newValue))?.customername;
+
       }
     }
   },
@@ -45,6 +64,8 @@ export default {
     userChanged() {
       UserService.setSelectedUser(this.selectedUser);
       // Optionally, trigger an event or action based on user change
+      const selectedUserName = this.users.find(user => user.id === Number(this.selectedUser))?.customername;
+
     }
   }
 };

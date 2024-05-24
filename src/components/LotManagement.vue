@@ -44,6 +44,7 @@
 import LotsList from "@/components/LotsList.vue";
 import LotsService from "@/Services/LotsServices.js";
 import CategoryService from "@/Services/CategoryServices.js";
+import UserService from "@/Services/UserService.js";
 
 export default {
   components: {
@@ -63,10 +64,12 @@ export default {
       selectedMainCategory: null,
       mode: null,
       error: null,
-      success: null
+      success: null,
+      selectedUser: null
     };
   },
   async created() {
+    this.selectedUser = UserService.getSelectedUser();
     await this.fetchCategories();
     await this.fetchLots();
   },
@@ -88,7 +91,11 @@ export default {
     },
     async fetchLots() {
       try {
-        this.lots = await LotsService.getAllLots();
+        if (this.mode === 'remove' && this.selectedUser) {
+          this.lots = await LotsService.getLotsByCustomer(this.selectedUser);
+        } else {
+          this.lots = await LotsService.getAllLots();
+        }
       } catch (error) {
         this.displayMessage('error', "Erreur lors du chargement des lots");
       }
@@ -102,6 +109,7 @@ export default {
     },
     async handleSubmit() {
       try {
+        this.localLot.customer = { id: this.selectedUser };
         await LotsService.addLot(this.localLot);
         await this.fetchLots();
         this.displayMessage('success', "Lot ajouté avec succès");

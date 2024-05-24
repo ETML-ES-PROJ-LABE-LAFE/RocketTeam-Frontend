@@ -3,11 +3,9 @@ import axios from 'axios';
 const BASE_URL = "http://localhost:8080/lots";
 
 class LotsServices {
-
     async getAllLots() {
         try {
             const response = await axios.get(BASE_URL);
-            console.log("getAllLots response:", response.data); // Log response
             return response.data;
         } catch (error) {
             console.error('Error fetching lots:', error);
@@ -38,7 +36,7 @@ class LotsServices {
     async placeBid(lotId, bidAmount) {
         try {
             const response = await axios.put(`${BASE_URL}/${lotId}/placeBid`, null, {
-                params: {bidAmount}
+                params: { bidAmount }
             });
             return response.data;
         } catch (error) {
@@ -56,17 +54,6 @@ class LotsServices {
         }
     }
 
-    async getLotsBySubcategoryAndCustomer(subcategoryId, customerId) {
-        try {
-            const response = await axios.get(`${BASE_URL}/categories/${subcategoryId}/lots`, {
-                params: {customerId}
-            });
-            return response.data;
-        } catch (error) {
-            console.error('Error fetching lots by subcategory and customer:', error);
-            throw new Error('Failed to fetch lots by subcategory and customer');
-        }
-    }
     async addLot(lot) {
         try {
             const response = await axios.post(BASE_URL, lot);
@@ -85,6 +72,7 @@ class LotsServices {
             throw new Error('Failed to delete lot');
         }
     }
+
     async endAuction(lotId) {
         try {
             const response = await axios.put(`${BASE_URL}/${lotId}/endAuction`);
@@ -92,6 +80,16 @@ class LotsServices {
         } catch (error) {
             console.error('Error ending auction:', error);
             throw new Error('Failed to end auction');
+        }
+    }
+
+    async getLotsByCustomer(customerId) {
+        try {
+            const response = await axios.get(`${BASE_URL}/customer/${customerId}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching lots by customer:', error);
+            throw new Error('Failed to fetch lots by customer');
         }
     }
 }
