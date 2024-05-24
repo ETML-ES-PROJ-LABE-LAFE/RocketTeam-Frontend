@@ -6,10 +6,7 @@
       <div v-else>
         <div v-if="lot">
           <LotItem :lot="lot" />
-          <div class="button-container">
-            <button @click="placeBid">Enchérir</button>
-            <button @click="goBack">Retour à la liste</button>
-          </div>
+          <ActionButtons :lot="lot" @go-back="goBack" @place-bid="placeBid" @remove-lot="removeLot" />
         </div>
         <div v-else>
           <p>Aucun détail de lot disponible.</p>
@@ -20,14 +17,16 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import {ref, onMounted} from 'vue';
 import LotsService from '@/Services/LotsServices.js';
 import LotItem from '@/components/LotItem.vue';
+import ActionButtons from '@/components/ActionButtons.vue';
 
 export default {
   name: 'EnchereView',
   components: {
-    LotItem
+    LotItem,
+    ActionButtons
   },
   props: ['id'],
   setup(props) {
@@ -44,19 +43,29 @@ export default {
       }
     });
 
-    const placeBid = () => {
+    const placeBid = (bidAmount) => {
       // Logic to place a bid
+      console.log("Placing bid:", bidAmount);
+      // Implement your logic here
     };
 
     const goBack = () => {
-      this.$router.push({ name: 'lots' });
+      // Utilisation de window.history.back() pour revenir à la page précédente
+      window.history.back();
+    };
+
+    const removeLot = () => {
+      // Logic to remove the lot from the auction
+      console.log("Removing lot");
+      // Implement your logic here
     };
 
     return {
       lot,
       loading,
       placeBid,
-      goBack
+      goBack,
+      removeLot
     };
   }
 };
@@ -75,7 +84,7 @@ export default {
   background-color: rgba(0, 0, 0, 0.6);
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   margin: auto;
   width: 90%;
   max-width: 1100px;

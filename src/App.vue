@@ -55,7 +55,7 @@ export default {
     selectedUser(newValue) {
       if (newValue) {
         UserService.setSelectedUser(newValue);
-        const selectedUserName = this.users.find(user => user.id === Number(newValue))?.customername;
+        //const selectedUserName = this.users.find(user => user.id === Number(newValue))?.customername;
 
       }
     }
@@ -64,7 +64,7 @@ export default {
     userChanged() {
       UserService.setSelectedUser(this.selectedUser);
       // Optionally, trigger an event or action based on user change
-      const selectedUserName = this.users.find(user => user.id === Number(this.selectedUser))?.customername;
+      //const selectedUserName = this.users.find(user => user.id === Number(this.selectedUser))?.customername;
 
     }
   }

@@ -69,23 +69,20 @@ export default {
 
     async fetchSelectedSubcategoryLots() {
       try {
-        if (this.selectedUser) {
-          this.lots = await LotsService.getLotsBySubcategoryAndCustomer(this.selectedSubcategory, this.selectedUser);
-          if (this.lots.length === 0) {
-            throw new Error("Aucun lot trouvé pour cette sous-catégorie et cet utilisateur");
-          }
-        } else {
-          this.displayError('lotsError', "Veuillez sélectionner un utilisateur");
+        this.lots = await LotsService.getLotsBySubcategory(this.selectedSubcategory);
+        console.log("Lots fetched:", this.lots); // Ajoutez cette ligne pour déboguer
+        if (this.lots.length === 0) {
+          this.displayError('lotsError', "Aucun lot trouvé pour cette sous-catégorie");
         }
       } catch (error) {
-        console.error("Error fetching lots by subcategory and user:", error);
+        console.error("Error fetching lots by subcategory:", error);
         this.displayError('lotsError', "Erreur lors du chargement des lots, veuillez essayer plus tard");
       }
     }
+
   }
 };
 </script>
-
 
 <style>
 .lots-background {

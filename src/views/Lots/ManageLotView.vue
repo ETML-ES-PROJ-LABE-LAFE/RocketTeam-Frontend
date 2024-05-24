@@ -99,11 +99,15 @@ export default {
     },
     async fetchLots() {
       try {
-        this.lots = await LotsService.getAllLots();
+        if (this.mode === 'remove' && this.selectedUser) {
+          this.lots = await LotsService.getLotsByCustomer(this.selectedUser);
+        } else {
+          this.lots = await LotsService.getAllLots();
+        }
       } catch (error) {
         this.displayMessage('error', "Erreur lors du chargement des lots");
       }
-    },
+  },
     fetchSubcategories() {
       if (this.selectedMainCategory) {
         this.subcategories = this.categories.filter(cat => cat.parentCategory && cat.parentCategory.id === this.selectedMainCategory.id);

@@ -14,13 +14,10 @@ class UserService {
     }
 
     getSelectedUser() {
-        const selectedUser = localStorage.getItem('selectedUser');
-        console.log('Selected user from localStorage:', selectedUser); // Log the selected user
-        return selectedUser;
+        return localStorage.getItem('selectedUser');
     }
 
     setSelectedUser(userId) {
-        console.log('Setting selected user to localStorage:', userId); // Log the user being set
         localStorage.setItem('selectedUser', userId);
     }
 }

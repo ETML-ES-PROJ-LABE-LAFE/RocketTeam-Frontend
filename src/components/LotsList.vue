@@ -60,7 +60,7 @@ export default {
   methods: {
     goToEnchere(lotId) {
       if (!this.showDeleteButton && !this.showEndAuctionButton) {
-        this.$router.push({ name: 'enchere', params: { id: lotId } });
+        this.$router.push({name: 'enchere', params: {id: lotId}});
       }
     },
     nextPage() {
@@ -104,27 +104,20 @@ export default {
 .pagination {
   display: flex;
   justify-content: center;
-  align-items: center;
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
-.pagination button {
-  margin: 0 5px;
-  padding: 10px 20px;
-  font-size: 16px;
-  border-radius: 5px;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.pagination button:hover {
-  background-color: #2980b9;
+button {
+  background-color: #3498db;
   color: white;
+  border: none;
+  padding: 5px 10px;
+  margin: 0 5px;
+  cursor: pointer;
 }
 
-.pagination span {
-  margin: 0 10px;
-  font-size: 16px;
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 </style>
