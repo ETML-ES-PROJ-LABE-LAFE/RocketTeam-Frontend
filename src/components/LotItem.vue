@@ -20,6 +20,7 @@
       <strong class="attribute-name">Offre la plus élevée:</strong>
       <span class="attribute-value">{{ lot.highestBid }}</span>
     </div>
+    <button v-if="showDeleteButton" @click="$emit('delete-lot', lot.id)">Supprimer</button>
   </div>
 </template>
 
@@ -30,10 +31,11 @@ export default {
       type: Object,
       required: true,
     },
-  },
-  created() {
-    console.log('lot:', this.lot);
-  },
+    showDeleteButton: {
+      type: Boolean,
+      default: false
+    }
+  }
 };
 </script>
 
@@ -72,5 +74,20 @@ export default {
 
 .attribute-value {
   text-align: right;
+}
+
+button {
+  padding: 5px 10px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: #c0392b;
 }
 </style>
