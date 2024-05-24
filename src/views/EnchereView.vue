@@ -5,14 +5,11 @@
       <div v-if="loading">Chargement en cours...</div>
       <div v-else>
         <div v-if="lot">
-          <div class="lot-details">
-            <p><strong>Description:</strong> {{ lot.description }}</p>
-            <p><strong>Catégorie:</strong> {{ lot.category.name }}</p>
-            <p><strong>Valeur initiale:</strong> {{ lot.initialPrice }}</p>
-            <p><strong>Offre la plus élevée:</strong> {{ lot.highestBid }}</p>
+          <LotItem :lot="lot" />
+          <div class="button-container">
+            <button @click="placeBid">Enchérir</button>
+            <button @click="goBack">Retour à la liste</button>
           </div>
-          <button @click="placeBid">Enchérir</button>
-          <button @click="goBack">Retour à la liste</button>
         </div>
         <div v-else>
           <p>Aucun détail de lot disponible.</p>
@@ -25,9 +22,13 @@
 <script>
 import { ref, onMounted } from 'vue';
 import LotsService from '@/Services/LotsServices.js';
+import LotItem from '@/components/LotItem.vue';
 
 export default {
   name: 'EnchereView',
+  components: {
+    LotItem
+  },
   props: ['id'],
   setup(props) {
     const lot = ref(null);
@@ -67,6 +68,7 @@ export default {
   padding: 20px 0;
   background: linear-gradient(to bottom right, #3498db, #bdc3c7);
   color: white;
+  min-height: 100vh;
 }
 
 .center-container {
@@ -80,16 +82,12 @@ export default {
   text-align: center;
 }
 
-.lot-details {
-  text-align: center;
-}
-
 h2 {
   margin-bottom: 20px;
 }
 
-p {
-  margin: 10px 0;
+.button-container {
+  margin-top: 20px;
 }
 
 button {

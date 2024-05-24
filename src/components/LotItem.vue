@@ -43,22 +43,12 @@ export default {
 .lot-item {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
   padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-  width: 30%;
-  min-width: 250px;
-  max-width: 400px;
+  color: white;
+  width: 100%; /* Full width in the parent container */
+  max-width: 800px;
   margin: 15px auto;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.lot-item:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .lot-attribute {
@@ -74,6 +64,7 @@ export default {
 
 .attribute-value {
   text-align: right;
+  margin-left: auto;
 }
 
 button {
