@@ -83,6 +83,7 @@ export default {
 }
 
 h2 {
+  color: black; /* Changed to black */
   margin-bottom: 20px;
 }
 

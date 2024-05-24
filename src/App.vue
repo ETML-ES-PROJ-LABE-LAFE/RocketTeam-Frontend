@@ -7,7 +7,7 @@
         <router-link to="/lots">Lots</router-link> |
         <router-link to="/manage-lots">Gestion des Lots</router-link> |
       </div>
-      <select v-model="selectedUser" @change="userChanged">
+      <select v-model="selectedUser" @change="userChanged" class="user-select">
         <option value="" disabled>Choose User</option>
         <option v-for="user in users" :key="user.id" :value="user.id">{{ user.customername }}</option>
       </select>
@@ -61,6 +61,8 @@ html, body {
   height: 100%; /* S'assure que le html et body prennent toute la hauteur */
   width: 100%; /* S'assure que le html et body prennent toute la largeur */
   overflow-x: hidden; /* Prévient le débordement horizontal */
+  background: linear-gradient(to bottom right, #3498db, #bdc3c7); /* Ajout du fond global */
+  color: white; /* Texte en blanc par défaut */
 }
 
 #app {
@@ -108,8 +110,10 @@ nav a:hover {
   color: #fff; /* Texte reste blanc lors du survol */
 }
 
-select {
+.user-select {
   padding: 5px;
   border-radius: 5px;
+  width: 200px; /* Réduction de la taille */
+  margin-left: auto; /* Pousse la liste déroulante vers la droite */
 }
 </style>

@@ -94,6 +94,7 @@ export default {
   border-bottom: 1px solid #ccc;
   list-style-type: none;
   cursor: pointer;
+  color: black; /* Changed to black */
 }
 
 .lots-list {

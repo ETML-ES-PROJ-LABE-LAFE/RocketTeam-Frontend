@@ -138,7 +138,7 @@ h2 {
 
 .centered-text {
   text-align: center;
-  color: white;
+  color: black; /* Changed to black */
   margin: 0 auto 10px;
 }
 

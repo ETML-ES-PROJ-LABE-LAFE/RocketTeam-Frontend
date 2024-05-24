@@ -45,7 +45,7 @@ export default {
   flex-direction: column;
   align-items: flex-start;
   padding: 10px;
-  color: white;
+  color: black; /* Changed to black */
   width: 100%; /* Full width in the parent container */
   max-width: 800px;
   margin: 15px auto;
@@ -60,11 +60,13 @@ export default {
 .attribute-name {
   margin-right: 10px;
   font-weight: bold;
+  color: black; /* Changed to black */
 }
 
 .attribute-value {
   text-align: right;
   margin-left: auto;
+  color: black; /* Changed to black */
 }
 
 button {

@@ -226,7 +226,7 @@ export default {
 }
 
 h2 {
-  color: black;
+  color: black; /* Changed to black */
   text-align: center;
   margin-bottom: 10px;
 }
@@ -238,6 +238,7 @@ form > div {
 form label {
   display: block;
   margin-bottom: 5px;
+  color: black; /* Changed to black */
 }
 
 textarea, select, input {

@@ -43,7 +43,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start; /* Align items at the start of the container */
   min-height: 100vh;
   background: linear-gradient(to bottom right, #3498db, #bdc3c7);
   color: white;
@@ -52,13 +52,13 @@ export default {
 .logo {
   width: 150px;
   height: auto;
-  margin: 10px 0;
+  margin-top: 40px; /* Add margin to the top */
 }
 
 h1 {
-  margin-top: 0;
   margin-bottom: 20px;
   font-size: 2.5em;
+  margin-top: 20px; /* Adjusted margin-top */
 }
 
 p {
@@ -68,6 +68,5 @@ p {
   line-height: 1.6;
   max-width: 800px;
   text-align: justify;
-
 }
 </style>
