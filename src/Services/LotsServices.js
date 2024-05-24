@@ -32,6 +32,24 @@ class LotsServices {
             throw new Error('Failed to fetch lots by subcategory');
         }
     }
+    async addLot(lot) {
+        try {
+            const response = await axios.post(BASE_URL, lot);
+            return response.data;
+        } catch (error) {
+            console.error('Error adding lot:', error);
+            throw new Error('Failed to add lot');
+        }
+    }
+
+    async deleteLot(lotId) {
+        try {
+            await axios.delete(`${BASE_URL}/${lotId}`);
+        } catch (error) {
+            console.error('Error deleting lot:', error);
+            throw new Error('Failed to delete lot');
+        }
+    }
 }
 
 export default new LotsServices();

@@ -3,6 +3,7 @@
     <router-link to="/">Home</router-link> |
     <router-link to="/about">About</router-link> |
     <router-link to="/lots">Lots</router-link>
+    <router-link to="/manage-lots">Gestion des Lots</router-link> <!-- Nouveau lien vers la page de gestion des lots -->
   </nav>
   <router-view/>
 </template>
