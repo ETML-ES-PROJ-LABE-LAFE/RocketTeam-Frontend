@@ -1,172 +1,80 @@
 <template>
-  <div class="manage-lots-background">
-    <div class="center-container">
-      <h2>Gestion des Lots</h2>
-      <div class="button-group">
-        <button @click="mode = 'add'">Ajouter un Lot</button>
-        <button @click="mode = 'remove'">Gérer les Lots</button>
-      </div>
+  <div>
+    <div v-if="!selectedUser">
+      <h2>Vous devez être connecté pour accéder à cette page.</h2>
+      <router-link to="/">
+        <button>Retour à l'accueil</button>
+      </router-link>
+    </div>
+    <div v-else>
       <div v-if="mode === 'add'">
-        <form @submit.prevent="handleSubmit">
+        <form @submit.prevent="$emit('handleSubmit')">
           <div>
             <label for="description">Description</label>
-            <textarea id="description" v-model="localLot.description" required></textarea>
+            <textarea
+                id="description"
+                :value="localLot.description"
+                @input="$emit('updateLocalLot', { ...localLot, description: $event.target.value })"
+                required
+            ></textarea>
           </div>
           <div>
             <label for="mainCategory">Catégorie principale</label>
-            <select id="mainCategory" v-model="selectedMainCategory" @change="fetchSubcategories" required>
+            <select
+                id="mainCategory"
+                :value="selectedMainCategory"
+                @change="handleMainCategoryChange"
+                required
+            >
               <option v-for="category in mainCategories" :key="category.id" :value="category">{{ category.name }}</option>
             </select>
           </div>
           <div>
             <label for="subcategory">Sous-catégorie</label>
-            <select id="subcategory" v-model="localLot.category" required>
+            <select
+                id="subcategory"
+                :value="localLot.category"
+                @change="$emit('updateLocalLot', { ...localLot, category: $event.target.value })"
+                required
+            >
               <option v-for="subcategory in subcategories" :key="subcategory.id" :value="subcategory">{{ subcategory.name }}</option>
             </select>
           </div>
           <div>
             <label for="initialPrice">Prix initial</label>
-            <input type="number" id="initialPrice" v-model="localLot.initialPrice" required>
+            <input
+                type="number"
+                id="initialPrice"
+                :value="localLot.initialPrice"
+                @input="$emit('updateLocalLot', { ...localLot, initialPrice: parseFloat($event.target.value) })"
+                required
+            >
           </div>
           <button type="submit">Ajouter le Lot</button>
         </form>
       </div>
-      <div v-if="mode === 'remove'">
-        <LotsList :lots="lots" :showDeleteButton="true" :showEndAuctionButton="true" @delete-lot="confirmDeleteLot" @end-auction="endAuction" />
-      </div>
     </div>
-    <div v-if="error" class="error-popup">{{ error }}</div>
-    <div v-if="success" class="success-popup">{{ success }}</div>
   </div>
 </template>
 
 <script>
-import LotsList from "@/components/LotsList.vue";
-import LotsService from "@/Services/LotsServices.js";
-import CategoryService from "@/Services/CategoryServices.js";
-import UserService from "@/Services/UserService.js";
-
 export default {
-  components: {
-    LotsList
-  },
-  data() {
-    return {
-      categories: [],
-      lots: [],
-      localLot: {
-        description: '',
-        category: null,
-        initialPrice: 0
-      },
-      mainCategories: [],
-      subcategories: [],
-      selectedMainCategory: null,
-      mode: null,
-      error: null,
-      success: null,
-      selectedUser: null
-    };
-  },
-  async created() {
-    this.selectedUser = UserService.getSelectedUser();
-    await this.fetchCategories();
-    await this.fetchLots();
-  },
-  watch: {
-    categories: {
-      handler(newCategories) {
-        this.mainCategories = newCategories.filter(cat => !cat.parentCategory);
-      },
-      immediate: true
-    }
+  props: {
+    mainCategories: Array,
+    subcategories: Array,
+    selectedMainCategory: Object,
+    localLot: Object,
+    mode: String,
+    selectedUser: Object
   },
   methods: {
-    async fetchCategories() {
-      try {
-        this.categories = await CategoryService.getAllCategories();
-      } catch (error) {
-        this.displayMessage('error', "Erreur lors du chargement des catégories");
-      }
-    },
-    async fetchLots() {
-      try {
-        if (this.mode === 'remove' && this.selectedUser) {
-          this.lots = await LotsService.getLotsByCustomer(this.selectedUser);
-        } else {
-          this.lots = await LotsService.getAllLots();
-        }
-      } catch (error) {
-        this.displayMessage('error', "Erreur lors du chargement des lots");
-      }
-    },
-    fetchSubcategories() {
-      if (this.selectedMainCategory) {
-        this.subcategories = this.categories.filter(cat => cat.parentCategory && cat.parentCategory.id === this.selectedMainCategory.id);
-      } else {
-        this.subcategories = [];
-      }
-    },
-    async handleSubmit() {
-      try {
-        this.localLot.customer = { id: this.selectedUser };
-        await LotsService.addLot(this.localLot);
-        await this.fetchLots();
-        this.displayMessage('success', "Lot ajouté avec succès");
-        this.resetForm();
-      } catch (error) {
-        this.displayMessage('error', "Erreur lors de l'ajout du lot");
-      }
-    },
-    async confirmDeleteLot(lotId) {
-      if (confirm("Êtes-vous sûr de vouloir supprimer ce lot?")) {
-        await this.deleteLot(lotId);
-      }
-    },
-    async deleteLot(lotId) {
-      try {
-        await LotsService.deleteLot(lotId);
-        await this.fetchLots();
-        this.displayMessage('success', "Lot supprimé avec succès");
-      } catch (error) {
-        this.displayMessage('error', "Erreur lors de la suppression du lot");
-      }
-    },
-    async endAuction(lotId) {
-      try {
-        await LotsService.endAuction(lotId);
-        await this.fetchLots();
-        this.displayMessage('success', "Les enchères pour ce lot sont terminées");
-      } catch (error) {
-        this.displayMessage('error', "Erreur lors de la fin des enchères pour ce lot");
-      }
-    },
-    resetForm() {
-      this.localLot = {
-        description: '',
-        category: null,
-        initialPrice: 0
-      };
-      this.selectedMainCategory = null;
-      this.subcategories = [];
-    },
-    displayMessage(type, message) {
-      if (type === 'success') {
-        this.success = message;
-        this.error = null;
-      } else if (type === 'error') {
-        this.error = message;
-        this.success = null;
-      }
-      setTimeout(() => {
-        this.success = null;
-        this.error = null;
-      }, 5000);
+    handleMainCategoryChange(event) {
+      this.$emit('update:selectedMainCategory', event.target.value);
+      this.$emit('fetchSubcategories');
     }
   }
 };
 </script>
-
 <style>
 .manage-lots-background {
   width: 100%;

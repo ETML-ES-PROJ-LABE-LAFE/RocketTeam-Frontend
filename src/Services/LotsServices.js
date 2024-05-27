@@ -61,6 +61,15 @@ class LotsServices {
             throw new Error('Failed to end auction');
         }
     }
+    async getLotsByCustomer(customerId) {
+        try {
+            const response = await axios.get(`${BASE_URL}/customer/${customerId}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching lots by customer:', error);
+            throw new Error('Failed to fetch lots by customer');
+        }
+    }
 }
 
 export default new LotsServices();

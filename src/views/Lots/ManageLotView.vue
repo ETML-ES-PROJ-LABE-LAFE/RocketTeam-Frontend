@@ -1,38 +1,39 @@
 <template>
   <div class="manage-lots-background">
     <div class="center-container">
-      <h2>Gestion des Lots</h2>
-      <div class="button-group">
-        <button @click="mode = 'add'">Ajouter un Lot</button>
-        <button @click="mode = 'remove'">Gérer les Lots</button>
+      <div v-if="!selectedUser">
+        <h2>Vous devez être connecté pour accéder à cette page.</h2>
+        <router-link to="/">
+          <button>Retour à l'accueil</button>
+        </router-link>
       </div>
-      <div v-if="mode === 'add'">
-        <form @submit.prevent="handleSubmit">
-          <div>
-            <label for="description">Description</label>
-            <textarea id="description" v-model="localLot.description" required></textarea>
-          </div>
-          <div>
-            <label for="mainCategory">Catégorie principale</label>
-            <select id="mainCategory" v-model="selectedMainCategory" @change="fetchSubcategories" required>
-              <option v-for="category in mainCategories" :key="category.id" :value="category">{{ category.name }}</option>
-            </select>
-          </div>
-          <div>
-            <label for="subcategory">Sous-catégorie</label>
-            <select id="subcategory" v-model="localLot.category" required>
-              <option v-for="subcategory in subcategories" :key="subcategory.id" :value="subcategory">{{ subcategory.name }}</option>
-            </select>
-          </div>
-          <div>
-            <label for="initialPrice">Prix initial</label>
-            <input type="number" id="initialPrice" v-model="localLot.initialPrice" required>
-          </div>
-          <button type="submit">Ajouter le Lot</button>
-        </form>
-      </div>
-      <div v-if="mode === 'remove'">
-        <LotsList :lots="filteredLots" :showDeleteButton="true" :showEndAuctionButton="true" @delete-lot="confirmDeleteLot" @end-auction="endAuction" />
+      <div v-else>
+        <h2>Gestion des Lots</h2>
+        <div class="button-group">
+          <button @click="mode = 'add'">Ajouter un Lot</button>
+          <button @click="mode = 'remove'">Gérer les Lots</button>
+        </div>
+        <LotManagement
+            v-if="mode === 'add'"
+            :mainCategories="mainCategories"
+            :subcategories="subcategories"
+            :selectedMainCategory="selectedMainCategory"
+            :localLot="localLot"
+            :mode="mode"
+            :selectedUser="selectedUser"
+            @fetchSubcategories="fetchSubcategories"
+            @handleSubmit="handleSubmit"
+            @updateLocalLot="updateLocalLot"
+            @update:selectedMainCategory="selectedMainCategory = $event"
+        />
+        <LotsList
+            v-if="mode === 'remove'"
+            :lots="lots"
+            :showDeleteButton="true"
+            :showEndAuctionButton="true"
+            @delete-lot="confirmDeleteLot"
+            @end-auction="endAuction"
+        />
       </div>
     </div>
     <div v-if="error" class="error-popup">{{ error }}</div>
@@ -42,13 +43,15 @@
 
 <script>
 import LotsList from "@/components/LotsList.vue";
+import LotManagement from "@/components/LotManagement.vue";
 import LotsService from "@/Services/LotsServices.js";
 import CategoryService from "@/Services/CategoryServices.js";
 import UserService from "@/Services/UserService.js";
 
 export default {
   components: {
-    LotsList
+    LotsList,
+    LotManagement
   },
   data() {
     return {
@@ -57,7 +60,8 @@ export default {
       localLot: {
         description: '',
         category: null,
-        initialPrice: 0
+        initialPrice: 0,
+        customer: null
       },
       mainCategories: [],
       subcategories: [],
@@ -71,7 +75,9 @@ export default {
   async created() {
     this.selectedUser = UserService.getSelectedUser();
     await this.fetchCategories();
-    await this.fetchLots();
+    if (this.selectedUser) {
+      await this.fetchLots();
+    }
   },
   watch: {
     categories: {
@@ -79,14 +85,6 @@ export default {
         this.mainCategories = newCategories.filter(cat => !cat.parentCategory);
       },
       immediate: true
-    }
-  },
-  computed: {
-    filteredLots() {
-      if (this.mode === 'remove') {
-        return this.lots.filter(lot => lot.customer && lot.customer.id === this.selectedUser);
-      }
-      return this.lots;
     }
   },
   methods: {
@@ -99,18 +97,14 @@ export default {
     },
     async fetchLots() {
       try {
-        if (this.mode === 'remove' && this.selectedUser) {
-          this.lots = await LotsService.getLotsByCustomer(this.selectedUser);
-        } else {
-          this.lots = await LotsService.getAllLots();
-        }
+        this.lots = await LotsService.getLotsByCustomer(this.selectedUser);
       } catch (error) {
         this.displayMessage('error', "Erreur lors du chargement des lots");
       }
-  },
-    fetchSubcategories() {
-      if (this.selectedMainCategory) {
-        this.subcategories = this.categories.filter(cat => cat.parentCategory && cat.parentCategory.id === this.selectedMainCategory.id);
+    },
+    fetchSubcategories(mainCategoryId) {
+      if (mainCategoryId) {
+        this.subcategories = this.categories.filter(cat => cat.parentCategory && cat.parentCategory.id == mainCategoryId);
       } else {
         this.subcategories = [];
       }
@@ -153,10 +147,17 @@ export default {
       this.localLot = {
         description: '',
         category: null,
-        initialPrice: 0
+        initialPrice: 0,
+        customer: null
       };
       this.selectedMainCategory = null;
       this.subcategories = [];
+    },
+    updateLocalLot(newLocalLot) {
+      this.localLot = newLocalLot;
+    },
+    goToHome() {
+      this.$router.push({ path: '/' });
     },
     displayMessage(type, message) {
       if (type === 'success') {

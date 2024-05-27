@@ -60,7 +60,7 @@ export default {
   methods: {
     goToEnchere(lotId) {
       if (!this.showDeleteButton && !this.showEndAuctionButton) {
-        this.$router.push({name: 'enchere', params: {id: lotId}});
+        this.$router.push({ name: 'enchere', params: { id: lotId } });
       }
     },
     nextPage() {

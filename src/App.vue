@@ -5,11 +5,11 @@
         <router-link to="/">Home</router-link> |
         <router-link to="/about">About</router-link> |
         <router-link to="/lots">Lots</router-link> |
-        <router-link to="/manage-lots">Gestion des Lots</router-link> |
+        <router-link v-if="selectedUser" to="/manage-lots">Gestion des Lots</router-link> |
       </div>
       <select v-model="selectedUser" @change="userChanged" class="user-select">
-        <option value="" disabled>Choose User</option>
-        <option v-for="user in users" :key="user.id" :value="user.id">{{ user.customername }}</option>
+        <option value="">Non connecté</option>
+        <option v-for="user in users" :key="user.id" :value="user.id">{{ user.name }}</option>
       </select>
     </div>
   </nav>
@@ -29,21 +29,11 @@ export default {
   async created() {
     try {
       this.users = await UserService.getAllUsers();
-      console.log("Fetched users:", this.users); // Log the fetched users
-
-      // Check if users array is correctly populated
-      if (this.users.length === 0) {
-        console.error('No users fetched from backend.');
-      } else {
-        this.users.forEach(user => {
-          console.log(`User: ${user.customername} (ID: ${user.id})`);
-        });
-      }
-
       this.selectedUser = UserService.getSelectedUser();
+
       if (this.selectedUser) {
-        const selectedUserName = this.users.find(user => user.id === Number(this.selectedUser))?.customername;
-        console.log("Selected user on created:", this.selectedUser, selectedUserName); // Log the selected user on created
+        const selectedUserName = this.users.find(user => user.id === Number(this.selectedUser))?.name;
+        console.log("Selected user on created:", this.selectedUser, selectedUserName);
       } else {
         console.log("No user selected on created");
       }
@@ -51,21 +41,10 @@ export default {
       console.error('Error fetching users:', error);
     }
   },
-  watch: {
-    selectedUser(newValue) {
-      if (newValue) {
-        UserService.setSelectedUser(newValue);
-        //const selectedUserName = this.users.find(user => user.id === Number(newValue))?.customername;
-
-      }
-    }
-  },
   methods: {
     userChanged() {
       UserService.setSelectedUser(this.selectedUser);
-      // Optionally, trigger an event or action based on user change
-      //const selectedUserName = this.users.find(user => user.id === Number(this.selectedUser))?.customername;
-
+      this.$router.go(); // Reload the page by programmatically refreshing the router
     }
   }
 };
