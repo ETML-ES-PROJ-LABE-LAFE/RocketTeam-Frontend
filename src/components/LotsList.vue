@@ -12,7 +12,7 @@
     </ul>
     <div class="pagination">
       <button @click="prevPage" :disabled="currentPage === 1">Précédent</button>
-      <span>Page {{ currentPage }} sur {{ totalPages }}</span>
+      <span class="pagination-text">Page {{ currentPage }} sur {{ totalPages }}</span>
       <button @click="nextPage" :disabled="currentPage === totalPages">Suivant</button>
     </div>
   </div>
@@ -123,5 +123,10 @@ button {
 button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
+}
+
+.pagination-text {
+  color: black; /* Changed to black */
+  margin: 0 10px; /* Ajout d'un espacement pour le texte */
 }
 </style>

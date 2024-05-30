@@ -7,10 +7,12 @@
         <router-link to="/lots">Lots</router-link> |
         <router-link v-if="selectedUser" to="/manage-lots">Gestion des Lots</router-link> |
       </div>
-      <select v-model="selectedUserId" @change="userChanged" class="user-select">
-        <option value="">Non connecté</option>
-        <option v-for="user in users" :key="user.id" :value="user.id">{{ user.name }}</option>
-      </select>
+      <div class="user-select-container">
+        <select v-model="selectedUserId" @change="userChanged" class="user-select">
+          <option value="">Non connecté</option>
+          <option v-for="user in users" :key="user.id" :value="user.id">{{ user.name }}</option>
+        </select>
+      </div>
     </div>
   </nav>
   <router-view/>
@@ -115,10 +117,26 @@ nav a:hover {
   color: #fff; /* Texte reste blanc lors du survol */
 }
 
+.user-select-container {
+  display: flex;
+  align-items: center;
+}
+
 .user-select {
-  padding: 5px;
+  padding: 8px 12px;
   border-radius: 5px;
-  width: 200px; /* Réduction de la taille */
-  margin-left: auto; /* Pousse la liste déroulante vers la droite */
+  width: 250px; /* Largeur augmentée pour meilleure lisibilité */
+  margin-left: 10px; /* Ajuste l'espace pour qu'il ne soit pas coupé */
+  border: 1px solid #ccc;
+  background-color: white;
+  color: black;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s; /* Animation douce pour focus */
+}
+
+.user-select:focus {
+  border-color: #3498db; /* Couleur de la bordure au focus */
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5); /* Ombre portée au focus */
 }
 </style>

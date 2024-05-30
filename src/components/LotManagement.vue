@@ -187,6 +187,26 @@ export default {
   border: 1px solid #d6e9c6;
 }
 
+form > div {
+  margin-bottom: 10px;
+}
+
+form label {
+  display: block;
+  margin-bottom: 5px;
+  color: black; /* Changer la couleur du texte à noir */
+}
+
+textarea, select, input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  color: black; /* Changer la couleur du texte à noir */
+}
+
 h2 {
   color: black;
   text-align: center;

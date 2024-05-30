@@ -2,7 +2,6 @@
   <div class="action-buttons">
     <button class="btn btn-blue" @click="goBack">Retour à la liste</button>
     <button class="btn btn-green" @click="placeBid" :disabled="!selectedUser">Enchérir</button>
-    <button class="btn btn-red" @click="removeLot">Retirer le lot de la vente</button>
   </div>
 </template>
 
@@ -24,11 +23,6 @@ export default {
     },
     placeBid() {
       this.$emit('place-bid');
-    },
-    removeLot() {
-      if (confirm("Êtes-vous sûr de vouloir retirer ce lot de la vente ?")) {
-        this.$emit('remove-lot');
-      }
     }
   }
 };
