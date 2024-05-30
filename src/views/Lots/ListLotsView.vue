@@ -4,13 +4,13 @@
       <h2>Sélection des lots</h2>
       <p class="centered-text">Veuillez sélectionner la catégorie principale de lots que vous voulez consulter</p>
       <div class="center-items">
-        <CategorySelector @subcategory-selected="handleSubcategorySelected" />
+        <CategorySelector displayMode="buttons" @subcategory-selected="handleSubcategorySelected" />
       </div>
     </div>
     <div v-if="categoryError" class="error-popup">{{ categoryError }}</div>
     <div v-if="lots.length > 0">
       <h3>Liste des Lots</h3>
-      <LotsList :lots="lots" />
+      <LotsList :lots="lots" ref="lotsListRef" />
     </div>
     <div v-if="lotsError" class="error-popup">{{ lotsError }}</div>
   </div>
@@ -65,12 +65,13 @@ export default {
     async handleSubcategorySelected(selectedSubcategory) {
       this.selectedSubcategory = selectedSubcategory;
       await this.fetchSelectedSubcategoryLots();
+      this.$refs.lotsListRef.resetPagination(); // Reset pagination to the first page
     },
 
     async fetchSelectedSubcategoryLots() {
       try {
         this.lots = await LotsService.getLotsBySubcategory(this.selectedSubcategory);
-        console.log("Lots fetched:", this.lots);
+        console.log("Lots fetched:", this.lots); // Ajoutez cette ligne pour déboguer
         if (this.lots.length === 0) {
           this.displayError('lotsError', "Aucun lot trouvé pour cette sous-catégorie");
         }
@@ -79,6 +80,7 @@ export default {
         this.displayError('lotsError', "Erreur lors du chargement des lots, veuillez essayer plus tard");
       }
     }
+
   }
 };
 </script>
@@ -132,7 +134,7 @@ h2 {
 
 .centered-text {
   text-align: center;
-  color: black;
+  color: black; /* Changed to black */
   margin: 0 auto 10px;
 }
 

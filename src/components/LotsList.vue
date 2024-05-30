@@ -74,6 +74,9 @@ export default {
         this.currentPage--;
       }
     },
+    resetPagination() {
+      this.currentPage = 1;
+    },
     async endAuction(lotId) {
       try {
         this.disabledButtons.push(lotId);

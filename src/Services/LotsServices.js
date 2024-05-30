@@ -77,6 +77,19 @@ class LotsServices {
         }
     }
 
+    async setLotActive(lotId, active) {
+        try {
+            const encodedId = this.encodeId(lotId);
+            const response = await axios.put(`${BASE_URL}/${encodedId}/setActive`, null, {
+                params: { active }
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error setting lot active status:', error);
+            throw new Error('Failed to set lot active status');
+        }
+    }
+
     async getLotsByCustomer(customer) {
         try {
             const response = await axios.get(`${BASE_URL}/customer/${customer.id}`);

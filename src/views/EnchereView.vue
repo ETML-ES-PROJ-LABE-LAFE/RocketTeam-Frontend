@@ -1,130 +1,206 @@
 <template>
-  <div class="enchere-background">
+  <div class="manage-lots-background">
     <div class="center-container">
-      <h2>Détails du lot</h2>
-      <div v-if="loading">Chargement en cours...</div>
+      <div v-if="!selectedUser">
+        <h2>Vous devez être connecté pour accéder à cette page.</h2>
+        <router-link to="/">
+          <button>Retour à l'accueil</button>
+        </router-link>
+      </div>
       <div v-else>
-        <div v-if="lot">
-          <LotItem :lot="lot" :showImage="true" />
-          <ActionButtons
-              :lot="lot"
-              :selectedUser="selectedUser"
-              @go-back="goBack"
-              @place-bid="showBidModal"
-              @remove-lot="removeLot"
-          />
-          <div v-if="showModal" class="modal">
-            <div class="modal-content">
-              <span class="close" @click="hideBidModal">&times;</span>
-              <h2>Placer une enchère</h2>
-              <input v-model="bidAmount" type="number" placeholder="Entrez votre offre" />
-              <button @click="placeBid">Soumettre</button>
-            </div>
-          </div>
+        <h2>Gestion des Lots</h2>
+        <div class="button-group">
+          <button @click="mode = 'add'">Ajouter un Lot</button>
+          <button @click="mode = 'remove'">Gérer les Lots</button>
         </div>
-        <div v-else>
-          <p>Aucun détail de lot disponible.</p>
-        </div>
+        <LotManagement
+            v-if="mode === 'add'"
+            :mainCategories="mainCategories"
+            :subcategories="subcategories"
+            :selectedMainCategory="selectedMainCategory"
+            :localLot="localLot"
+            :mode="mode"
+            :selectedUser="selectedUser"
+            @fetchSubcategories="fetchSubcategories"
+            @handleSubmit="handleSubmit"
+            @updateLocalLot="updateLocalLot"
+            @update:selectedMainCategory="selectedMainCategory = $event"
+        />
+
+        <LotsList
+            v-if="mode === 'remove'"
+            :lots="lots"
+            :showDeleteButton="true"
+            :showEndAuctionButton="true"
+            @delete-lot="confirmDeleteLot"
+            @end-auction="terminateAuction"
+        />
       </div>
     </div>
+    <div v-if="error" class="error-popup">{{ error }}</div>
+    <div v-if="success" class="success-popup">{{ success }}</div>
   </div>
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
-import LotsService from '@/Services/LotsServices.js';
-import LotItem from '@/components/LotItem.vue';
-import ActionButtons from '@/components/ActionButtons.vue';
-import EnchereService from '@/Services/EnchereService.js';
-import UserService from '@/Services/UserService.js';
+import LotsList from "@/components/LotsList.vue";
+import LotManagement from "@/components/LotManagement.vue";
+import LotsService from "@/Services/LotsServices.js";
+import CategoryService from "@/Services/CategoryServices.js";
+import UserService from "@/Services/UserService.js";
 
 export default {
-  name: 'EnchereView',
   components: {
-    LotItem,
-    ActionButtons
+    LotsList,
+    LotManagement
   },
-  props: ['encodedId'],
-  setup(props) {
-    const lot = ref(null);
-    const loading = ref(true);
-    const showModal = ref(false);
-    const bidAmount = ref(0);
-    const selectedUser = ref(UserService.getSelectedUser());
-
-    const decodeId = (encodedId) => {
-      return atob(encodedId);
-    };
-
-    onMounted(async () => {
-      try {
-        const lotId = decodeId(props.encodedId);
-        lot.value = await LotsService.getLotById(lotId);
-      } catch (error) {
-        console.error("Error fetching lot details:", error);
-      } finally {
-        loading.value = false;
-      }
-    });
-
-    const placeBid = async () => {
-      if (!selectedUser.value) {
-        alert("Vous devez être connecté pour placer une enchère.");
-        return;
-      }
-      if (parseFloat(bidAmount.value) > lot.value.highestBid) {
-        try {
-          const enchere = {
-            amount: parseFloat(bidAmount.value),
-            timestamp: new Date().toISOString(),
-            lot: { id: lot.value.id },
-            customer: { id: selectedUser.value.id }
-          };
-          await EnchereService.placeEnchere(enchere);
-          lot.value.highestBid = parseFloat(bidAmount.value);
-          hideBidModal();
-        } catch (error) {
-          console.error("Error placing bid:", error);
-        }
-      } else {
-        alert("Votre offre doit être supérieure à l'offre la plus élevée.");
-      }
-    };
-
-    const showBidModal = () => {
-      showModal.value = true;
-    };
-
-    const hideBidModal = () => {
-      showModal.value = false;
-    };
-
-    const goBack = () => {
-      window.history.back();
-    };
-
-    const removeLot = () => {
-      console.log("Removing lot");
-    };
-
+  data() {
     return {
-      lot,
-      loading,
-      showModal,
-      bidAmount,
-      selectedUser,
-      placeBid,
-      showBidModal,
-      hideBidModal,
-      goBack,
-      removeLot
+      categories: [],
+      lots: [],
+      localLot: {
+        description: '',
+        category: null,
+        initialPrice: 0,
+        customer: null
+      },
+      mainCategories: [],
+      subcategories: [],
+      selectedMainCategory: null,
+      mode: null,
+      error: null,
+      success: null,
+      selectedUser: null
     };
+  },
+  async created() {
+    this.selectedUser = UserService.getSelectedUser();
+    await this.fetchCategories();
+    if (this.selectedUser) {
+      await this.fetchLots();
+    }
+  },
+  watch: {
+    categories: {
+      handler(newCategories) {
+        this.mainCategories = newCategories.filter(cat => !cat.parentCategory);
+      },
+      immediate: true
+    }
+  },
+  methods: {
+    async fetchCategories() {
+      try {
+        this.categories = await CategoryService.getAllCategories();
+      } catch (error) {
+        this.displayMessage('error', "Erreur lors du chargement des catégories");
+      }
+    },
+    async fetchLots() {
+      try {
+        const selectedUserObj = UserService.getSelectedUser();
+        if (!selectedUserObj) {
+          throw new Error('Utilisateur non sélectionné ou invalide');
+        }
+        this.lots = await LotsService.getLotsByCustomer(selectedUserObj);
+      } catch (error) {
+        this.displayMessage('error', "Erreur lors du chargement des lots");
+      }
+    },
+    fetchSubcategories(mainCategoryId) {
+      if (mainCategoryId) {
+        this.subcategories = this.categories.filter(cat => cat.parentCategory && cat.parentCategory.id == mainCategoryId);
+      } else {
+        this.subcategories = [];
+      }
+    },
+    async handleSubmit() {
+      try {
+        const selectedUserObj = UserService.getSelectedUser();
+        if (!selectedUserObj) {
+          throw new Error('Utilisateur non sélectionné ou invalide');
+        }
+        this.localLot.customer = { id: selectedUserObj.id };
+        this.localLot.highestBid = parseFloat(this.localLot.initialPrice); // Convert highestBid to a number
+        this.localLot.active = true; // Set active to true
+        console.log("localLot to be added:", this.localLot);
+
+        await LotsService.addLot(this.localLot);
+        await this.fetchLots();
+        this.displayMessage('success', "Lot ajouté avec succès");
+        this.resetForm();
+      } catch (error) {
+        console.error("Erreur lors de l'ajout du lot:", error);
+        this.displayMessage('error', "Erreur lors de l'ajout du lot");
+      }
+    },
+    async confirmDeleteLot(lotId) {
+      if (confirm("Êtes-vous sûr de vouloir supprimer ce lot?")) {
+        await this.deleteLot(lotId);
+      }
+    },
+    async deleteLot(lotId) {
+      try {
+        await LotsService.deleteLot(lotId);
+        await this.fetchLots();
+        this.displayMessage('success', "Lot supprimé avec succès");
+      } catch (error) {
+        this.displayMessage('error', "Erreur lors de la suppression du lot");
+      }
+    },
+    async endAuction(lotId) {
+      try {
+        await LotsService.endAuction(lotId);
+        await this.fetchLots();
+        this.displayMessage('success', "Les enchères pour ce lot sont terminées");
+      } catch (error) {
+        this.displayMessage('error', "Erreur lors de la fin des enchères pour ce lot");
+      }
+    },
+    async terminateAuction(lotId) {
+      try {
+        await LotsService.setLotActive(lotId, false);
+        await this.fetchLots();
+        this.displayMessage('success', "Les enchères pour ce lot sont terminées");
+      } catch (error) {
+        this.displayMessage('error', "Erreur lors de la fin des enchères pour ce lot");
+      }
+    },
+    resetForm() {
+      this.localLot = {
+        description: '',
+        category: null,
+        initialPrice: 0,
+        customer: null
+      };
+      this.selectedMainCategory = null;
+      this.subcategories = [];
+    },
+    updateLocalLot(newLocalLot) {
+      this.localLot = newLocalLot;
+    },
+    goToHome() {
+      this.$router.push({path: '/'});
+    },
+    displayMessage(type, message) {
+      if (type === 'success') {
+        this.success = message;
+        this.error = null;
+      } else if (type === 'error') {
+        this.error = message;
+        this.success = null;
+      }
+      setTimeout(() => {
+        this.success = null;
+        this.error = null;
+      }, 5000);
+    }
   }
 };
 </script>
 
 <style>
-.enchere-background {
+.manage-lots-background {
   width: 100%;
   padding: 20px 0;
   background: linear-gradient(to bottom right, #3498db, #bdc3c7);
@@ -133,75 +209,99 @@ export default {
 }
 
 .center-container {
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(255, 255, 255, 0.9);
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   margin: auto;
   width: 90%;
   max-width: 1100px;
-  text-align: center;
 }
 
-h2 {
-  color: black;
+.button-group {
+  display: flex;
+  justify-content: center;
   margin-bottom: 20px;
 }
 
-.button-container {
-  margin-top: 20px;
-}
-
-button {
-  margin: 10px;
+.button-group button {
+  margin: 0 10px;
   padding: 10px 20px;
-  border: none;
+  font-size: 16px;
   border-radius: 5px;
-  background-color: #3498db;
-  color: white;
+  border: none;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
+.button-group button:hover {
+  background-color: #2980b9;
+  color: white;
+}
+
+.error-popup,
+.success-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 15px 30px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1050;
+  max-width: 90%;
+  text-align: center;
+}
+
+.error-popup {
+  background-color: #fff;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.success-popup {
+  background-color: #dff0d8;
+  color: #3c763d;
+  border: 1px solid #d6e9c6;
+}
+
+h2 {
+  color: black; /* Changed to black */
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+form > div {
+  margin-bottom: 10px;
+}
+
+form label {
+  display: block;
+  margin-bottom: 5px;
+  color: black; /* Changed to black */
+}
+
+textarea, select, input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 button:hover {
   background-color: #2980b9;
-}
-
-.modal {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgb(0, 0, 0);
-  background-color: rgba(0, 0, 0, 0.4);
-}
-
-.modal-content {
-  background-color: #fefefe;
-  margin: auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%;
-  max-width: 500px;
-}
-
-.close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
 }
 </style>
