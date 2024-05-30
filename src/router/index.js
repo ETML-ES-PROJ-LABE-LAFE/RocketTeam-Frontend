@@ -24,7 +24,7 @@ const routes = [
   {
     path: '/enchere/:encodedId',
     name: 'enchere',
-    component: EnchereView, // Mise à jour du nom du composant
+    component: EnchereView,
     props: true
   },
   {

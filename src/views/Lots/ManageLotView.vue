@@ -13,6 +13,13 @@
           <button @click="mode = 'add'">Ajouter un Lot</button>
           <button @click="mode = 'remove'">Gérer les Lots</button>
         </div>
+        <div v-if="mode === 'remove'" class="filter-group">
+          <label for="lotStatus" style="color:black">Afficher les lots:</label>
+          <select id="lotStatus" v-model="filterStatus" @change="filterLots">
+            <option value="active">Actifs</option>
+            <option value="inactive">Inactifs</option>
+          </select>
+        </div>
         <LotManagement
             v-if="mode === 'add'"
             :mainCategories="mainCategories"
@@ -26,14 +33,13 @@
             @updateLocalLot="updateLocalLot"
             @update:selectedMainCategory="selectedMainCategory = $event"
         />
-
         <LotsList
             v-if="mode === 'remove'"
-            :lots="lots"
-            :showDeleteButton="true"
-            :showEndAuctionButton="true"
+            :lots="filteredLots"
+            :showDeleteButton="filterStatus === 'inactive'"
+            :showEndAuctionButton="filterStatus === 'active'"
             @delete-lot="confirmDeleteLot"
-            @end-auction="endAuction"
+            @end-auction="confirmEndAuction"
         />
       </div>
     </div>
@@ -58,6 +64,7 @@ export default {
     return {
       categories: [],
       lots: [],
+      filteredLots: [],
       localLot: {
         description: '',
         category: null,
@@ -70,7 +77,8 @@ export default {
       mode: null,
       error: null,
       success: null,
-      selectedUser: null
+      selectedUser: null,
+      filterStatus: 'active'
     };
   },
   async created() {
@@ -103,9 +111,15 @@ export default {
           throw new Error('Utilisateur non sélectionné ou invalide');
         }
         this.lots = await LotsService.getLotsByCustomer(selectedUserObj);
+        this.filterLots();
       } catch (error) {
         this.displayMessage('error', "Erreur lors du chargement des lots");
       }
+    },
+    filterLots() {
+      this.filteredLots = this.lots.filter(lot =>
+          this.filterStatus === 'active' ? lot.active : !lot.active
+      );
     },
     fetchSubcategories(mainCategoryId) {
       if (mainCategoryId) {
@@ -120,7 +134,7 @@ export default {
         if (!selectedUserObj) {
           throw new Error('Utilisateur non sélectionné ou invalide');
         }
-        this.localLot.customer = { id: selectedUserObj.id };
+        this.localLot.customer = {id: selectedUserObj.id};
         this.localLot.highestBid = parseFloat(this.localLot.initialPrice); // Convert highestBid to a number
         this.localLot.active = true; // Set active to true
         console.log("localLot to be added:", this.localLot);
@@ -146,6 +160,11 @@ export default {
         this.displayMessage('success', "Lot supprimé avec succès");
       } catch (error) {
         this.displayMessage('error', "Erreur lors de la suppression du lot");
+      }
+    },
+    async confirmEndAuction(lotId) {
+      if (confirm("Êtes-vous sûr de vouloir terminer les enchères pour ce lot?")) {
+        await this.endAuction(lotId);
       }
     },
     async endAuction(lotId) {
@@ -190,7 +209,6 @@ export default {
 };
 </script>
 
-
 <style>
 .manage-lots-background {
   width: 100%;
@@ -231,6 +249,23 @@ export default {
   color: white;
 }
 
+.filter-group {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  color: black;
+}
+
+.filter-group label {
+  margin-right: 10px;
+}
+
+.filter-group select {
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
 .error-popup,
 .success-popup {
   position: fixed;
@@ -261,39 +296,5 @@ h2 {
   color: black; /* Changed to black */
   text-align: center;
   margin-bottom: 10px;
-}
-
-form > div {
-  margin-bottom: 10px;
-}
-
-form label {
-  display: block;
-  margin-bottom: 5px;
-  color: black; /* Changed to black */
-}
-
-textarea, select, input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-}
-
-button {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #2980b9;
 }
 </style>

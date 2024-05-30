@@ -4,7 +4,7 @@
       <li v-for="lot in paginatedLots" :key="lot.id">
         <div @click="goToEnchere(lot.id)">
           <LotItem :lot="lot" :showDeleteButton="showDeleteButton" @delete-lot="$emit('delete-lot', lot.id)" />
-          <button v-if="showEndAuctionButton" :disabled="disabledButtons.includes(lot.id)" @click.stop="endAuction(lot.id)">
+          <button v-if="showEndAuctionButton && lot.active" :disabled="disabledButtons.includes(lot.id)" @click.stop="endAuction(lot.id)">
             Terminer les enchères
           </button>
         </div>
@@ -61,7 +61,7 @@ export default {
     goToEnchere(lotId) {
       if (!this.showDeleteButton && !this.showEndAuctionButton) {
         const encodedId = LotsService.encodeId(lotId);
-        this.$router.push({name: 'enchere', params: {encodedId}});
+        this.$router.push({ name: 'enchere', params: { encodedId } });
       }
     },
     nextPage() {
