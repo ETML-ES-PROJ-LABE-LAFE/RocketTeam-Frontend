@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <img src="../assets/auction_logo.png" alt="Logo de AuctionHouse" class="logo">
+    <img src="@/assets/auction_logo.png" alt="Logo de AuctionHouse" class="logo">
     <h1>Bienvenue sur AuctionHouse!</h1>
     <p>Bienvenue sur AuctionHouse, votre plateforme innovante d’enchères en ligne, où la passion de l’achat rencontre la simplicité de la vente. Que vous soyez acheteur à la recherche d'objets uniques ou vendeur désireux de trouver de nouveaux acquéreurs pour vos trésors, notre site est le carrefour idéal pour connecter des personnes partageant les mêmes intérêts.</p>
     <p>Chez AuctionHouse, nous vous proposons une expérience d’enchères transparente et sécurisée. Acheteurs, parcourez une vaste sélection de catégories et découvrez des articles rares, des objets de collection ou même des produits du quotidien à des prix compétitifs. Vendeurs, bénéficiez de notre plateforme intuitive pour lister vos articles et atteindre une large audience, augmentant ainsi vos chances de réussite.</p>

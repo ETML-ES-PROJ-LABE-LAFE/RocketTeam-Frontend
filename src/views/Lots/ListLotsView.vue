@@ -4,7 +4,7 @@
       <h2>Sélection des lots</h2>
       <p class="centered-text">Veuillez sélectionner la catégorie principale de lots que vous voulez consulter</p>
       <div class="center-items">
-        <CategorySelector displayMode="buttons" @subcategory-selected="handleSubcategorySelected" />
+        <CategorySelector @subcategory-selected="handleSubcategorySelected" />
       </div>
     </div>
     <div v-if="categoryError" class="error-popup">{{ categoryError }}</div>
@@ -70,7 +70,7 @@ export default {
     async fetchSelectedSubcategoryLots() {
       try {
         this.lots = await LotsService.getLotsBySubcategory(this.selectedSubcategory);
-        console.log("Lots fetched:", this.lots); // Ajoutez cette ligne pour déboguer
+        console.log("Lots fetched:", this.lots);
         if (this.lots.length === 0) {
           this.displayError('lotsError', "Aucun lot trouvé pour cette sous-catégorie");
         }
@@ -79,7 +79,6 @@ export default {
         this.displayError('lotsError', "Erreur lors du chargement des lots, veuillez essayer plus tard");
       }
     }
-
   }
 };
 </script>
@@ -133,7 +132,7 @@ h2 {
 
 .centered-text {
   text-align: center;
-  color: black; /* Changed to black */
+  color: black;
   margin: 0 auto 10px;
 }
 
