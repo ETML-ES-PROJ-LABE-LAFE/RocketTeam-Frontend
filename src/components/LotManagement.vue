@@ -2,9 +2,7 @@
   <div>
     <div v-if="!selectedUser">
       <h2>Vous devez être connecté pour accéder à cette page.</h2>
-      <router-link to="/">
-        <button>Retour à l'accueil</button>
-      </router-link>
+      <router-link to="/"><button>Retour à l'accueil</button></router-link>
     </div>
     <div v-else>
       <div v-if="mode === 'add'">
@@ -13,8 +11,8 @@
             <label for="description">Description</label>
             <textarea
                 id="description"
-                :value="localLot.description"
-                @input="$emit('updateLocalLot', { ...localLot, description: $event.target.value })"
+                :value="localDescription"
+                @input="updateDescription($event.target.value)"
                 required
             ></textarea>
           </div>
@@ -22,7 +20,7 @@
             <label for="mainCategory">Catégorie principale</label>
             <select
                 id="mainCategory"
-                :value="selectedMainCategory"
+                v-model="selectedMainCategory"
                 @change="handleMainCategoryChange"
                 required
             >
@@ -33,8 +31,7 @@
             <label for="subcategory">Sous-catégorie</label>
             <select
                 id="subcategory"
-                :value="localLot.category"
-                @change="$emit('updateLocalLot', { ...localLot, category: $event.target.value })"
+                v-model="localCategory"
                 required
             >
               <option v-for="subcategory in subcategories" :key="subcategory.id" :value="subcategory">{{ subcategory.name }}</option>
@@ -45,8 +42,8 @@
             <input
                 type="number"
                 id="initialPrice"
-                :value="localLot.initialPrice"
-                @input="$emit('updateLocalLot', { ...localLot, initialPrice: parseFloat($event.target.value) })"
+                :value="localInitialPrice"
+                @input="updateInitialPrice($event.target.value)"
                 required
             >
           </div>
@@ -58,23 +55,72 @@
 </template>
 
 <script>
+import CategoryServices from '@/Services/CategoryServices.js';
+
 export default {
   props: {
     mainCategories: Array,
-    subcategories: Array,
-    selectedMainCategory: Object,
     localLot: Object,
     mode: String,
     selectedUser: Object
   },
+  data() {
+    return {
+      selectedMainCategory: null,
+      subcategories: [],
+      localDescription: this.localLot.description,
+      localCategory: this.localLot.category,
+      localInitialPrice: this.localLot.initialPrice
+    };
+  },
+  watch: {
+    selectedMainCategory: {
+      async handler(newCategory) {
+        if (newCategory && newCategory.id) {
+          this.subcategories = await this.fetchSubcategories(newCategory.id);
+        } else {
+          this.subcategories = [];
+        }
+      },
+      immediate: true
+    },
+    localCategory: {
+      handler(newCategory) {
+        this.$emit('updateLocalLot', { ...this.localLot, category: newCategory });
+      },
+      immediate: true
+    }
+  },
   methods: {
-    handleMainCategoryChange(event) {
-      this.$emit('update:selectedMainCategory', event.target.value);
-      this.$emit('fetchSubcategories');
+    async handleMainCategoryChange() {
+      this.subcategories = await this.fetchSubcategories(this.selectedMainCategory.id);
+    },
+    async fetchSubcategories(parentCategoryId) {
+      try {
+        const allCategories = await CategoryServices.getAllCategories();
+        return allCategories.filter(category => category.parentCategory && category.parentCategory.id === parentCategoryId);
+      } catch (error) {
+        console.error('Erreur lors de la récupération des sous-catégories :', error);
+        return [];
+      }
+    },
+    updateDescription(description) {
+      this.localDescription = description;
+      this.$emit('updateLocalLot', { ...this.localLot, description });
+    },
+    updateCategory(category) {
+      this.localCategory = category;
+      this.$emit('updateLocalLot', { ...this.localLot, category });
+    },
+    updateInitialPrice(initialPrice) {
+      this.localInitialPrice = initialPrice;
+      this.$emit('updateLocalLot', { ...this.localLot, initialPrice });
     }
   }
 };
 </script>
+
+
 <style>
 .manage-lots-background {
   width: 100%;

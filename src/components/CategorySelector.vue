@@ -1,14 +1,23 @@
 <template>
   <div class="category-selector">
-    <div class="main-categories">
+    <div v-if="displayMode === 'buttons'" class="main-categories">
       <button v-for="category in mainCategories" :key="category.id" @click="selectMainCategory(category)" :class="{ 'selected': selectedMainCategory && selectedMainCategory.id === category.id }">
         {{ category.name }}
       </button>
     </div>
-    <select v-if="selectedMainCategory" v-model="selectedSubcategory" @change="handleSubcategoryChange">
-      <option value="" disabled selected>Sélectionnez une sous-catégorie</option>
-      <option v-for="subcategory in subcategories" :key="subcategory.id" :value="subcategory.id">{{ subcategory.name }}</option>
-    </select>
+    <div v-else>
+      <label for="mainCategory">Catégorie principale</label>
+      <select id="mainCategory" v-model="selectedMainCategory" @change="handleMainCategoryChange" required>
+        <option v-for="category in mainCategories" :key="category.id" :value="category">{{ category.name }}</option>
+      </select>
+    </div>
+    <div>
+      <label v-if="displayMode !== 'buttons'" for="subcategory">Sous-catégorie</label>
+      <select id="subcategory" v-model="selectedSubcategory" @change="handleSubcategoryChange">
+        <option value="" disabled selected>Sélectionnez une sous-catégorie</option>
+        <option v-for="subcategory in subcategories" :key="subcategory.id" :value="subcategory.id">{{ subcategory.name }}</option>
+      </select>
+    </div>
   </div>
 </template>
 
@@ -16,6 +25,12 @@
 import CategoryServices from '@/Services/CategoryServices.js';
 
 export default {
+  props: {
+    displayMode: {
+      type: String,
+      default: 'buttons'
+    }
+  },
   data() {
     return {
       mainCategories: [],
@@ -48,6 +63,9 @@ export default {
       } catch (error) {
         console.error('Erreur lors de la récupération des sous-catégories :', error);
       }
+    },
+    handleMainCategoryChange() {
+      this.fetchSubcategories(this.selectedMainCategory.id);
     },
     handleSubcategoryChange() {
       this.$emit('subcategory-selected', this.selectedSubcategory);

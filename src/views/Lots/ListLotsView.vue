@@ -4,7 +4,7 @@
       <h2>Sélection des lots</h2>
       <p class="centered-text">Veuillez sélectionner la catégorie principale de lots que vous voulez consulter</p>
       <div class="center-items">
-        <CategorySelector @subcategory-selected="handleSubcategorySelected" />
+        <CategorySelector displayMode="buttons" @subcategory-selected="handleSubcategorySelected" />
       </div>
     </div>
     <div v-if="categoryError" class="error-popup">{{ categoryError }}</div>

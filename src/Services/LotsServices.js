@@ -3,7 +3,6 @@ import axios from 'axios';
 const BASE_URL = "http://localhost:8080/lots";
 
 class LotsServices {
-
     async getAllLots() {
         try {
             const response = await axios.get(BASE_URL);
@@ -23,6 +22,7 @@ class LotsServices {
             throw new Error('Failed to fetch lot by ID');
         }
     }
+
     async getLotsBySubcategory(subcategoryId) {
         try {
             const response = await axios.get(`${BASE_URL}/categories/${subcategoryId}/lots`);
@@ -35,7 +35,11 @@ class LotsServices {
 
     async addLot(lot) {
         try {
-            const response = await axios.post(BASE_URL, lot);
+            const response = await axios.post(BASE_URL, JSON.stringify(lot), {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
             return response.data;
         } catch (error) {
             console.error('Error adding lot:', error);
@@ -61,15 +65,17 @@ class LotsServices {
             throw new Error('Failed to end auction');
         }
     }
-    async getLotsByCustomer(customerId) {
+
+    async getLotsByCustomer(customer) {
         try {
-            const response = await axios.get(`${BASE_URL}/customer/${customerId}`);
+            const response = await axios.get(`${BASE_URL}/customer/${customer.id}`);
             return response.data;
         } catch (error) {
             console.error('Error fetching lots by customer:', error);
             throw new Error('Failed to fetch lots by customer');
         }
     }
+
 }
 
 export default new LotsServices();
