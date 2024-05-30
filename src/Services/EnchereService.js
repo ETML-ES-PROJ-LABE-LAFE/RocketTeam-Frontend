@@ -5,7 +5,11 @@ const BASE_URL = "http://localhost:8080/encheres";
 class EnchereService {
     async placeEnchere(enchere) {
         try {
-            const response = await axios.post(BASE_URL, enchere);
+            const response = await axios.post(BASE_URL, enchere, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
             return response.data;
         } catch (error) {
             console.error('Error placing enchere:', error);

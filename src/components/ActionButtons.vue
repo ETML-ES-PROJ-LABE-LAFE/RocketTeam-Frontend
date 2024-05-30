@@ -1,8 +1,7 @@
-<!-- ActionButtons.vue -->
 <template>
   <div class="action-buttons">
     <button class="btn btn-blue" @click="goBack">Retour à la liste</button>
-    <button class="btn btn-green" @click="placeBid">Enchérir</button>
+    <button class="btn btn-green" @click="placeBid" :disabled="!selectedUser">Enchérir</button>
     <button class="btn btn-red" @click="removeLot">Retirer le lot de la vente</button>
   </div>
 </template>
@@ -14,18 +13,17 @@ export default {
       type: Object,
       required: true,
     },
+    selectedUser: {
+      type: Object,
+      default: null,
+    },
   },
   methods: {
     goBack() {
       this.$emit('go-back');
     },
     placeBid() {
-      const newBid = prompt("Entrez votre offre:");
-      if (newBid && !isNaN(newBid) && parseFloat(newBid) > this.lot.highestBid) {
-        this.$emit('place-bid', parseFloat(newBid));
-      } else {
-        alert("Veuillez entrer une offre valide supérieure à l'offre la plus élevée.");
-      }
+      this.$emit('place-bid');
     },
     removeLot() {
       if (confirm("Êtes-vous sûr de vouloir retirer ce lot de la vente ?")) {
@@ -51,6 +49,11 @@ export default {
   cursor: pointer;
   transition: background-color 0.3s;
   color: white;
+}
+
+.btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 
 .btn-blue {
