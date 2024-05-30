@@ -26,6 +26,7 @@
             @updateLocalLot="updateLocalLot"
             @update:selectedMainCategory="selectedMainCategory = $event"
         />
+
         <LotsList
             v-if="mode === 'remove'"
             :lots="lots"
@@ -97,7 +98,11 @@ export default {
     },
     async fetchLots() {
       try {
-        this.lots = await LotsService.getLotsByCustomer(this.selectedUser);
+        const selectedUserObj = UserService.getSelectedUser();
+        if (!selectedUserObj) {
+          throw new Error('Utilisateur non sélectionné ou invalide');
+        }
+        this.lots = await LotsService.getLotsByCustomer(selectedUserObj);
       } catch (error) {
         this.displayMessage('error', "Erreur lors du chargement des lots");
       }
@@ -111,12 +116,21 @@ export default {
     },
     async handleSubmit() {
       try {
-        this.localLot.customer = { id: this.selectedUser };
+        const selectedUserObj = UserService.getSelectedUser();
+        if (!selectedUserObj) {
+          throw new Error('Utilisateur non sélectionné ou invalide');
+        }
+        this.localLot.customer = { id: selectedUserObj.id };
+        this.localLot.highestBid = parseFloat(this.localLot.initialPrice); // Convert highestBid to a number
+        this.localLot.active = true; // Set active to true
+        console.log("localLot to be added:", this.localLot);
+
         await LotsService.addLot(this.localLot);
         await this.fetchLots();
         this.displayMessage('success', "Lot ajouté avec succès");
         this.resetForm();
       } catch (error) {
+        console.error("Erreur lors de l'ajout du lot:", error);
         this.displayMessage('error', "Erreur lors de l'ajout du lot");
       }
     },
@@ -157,7 +171,7 @@ export default {
       this.localLot = newLocalLot;
     },
     goToHome() {
-      this.$router.push({ path: '/' });
+      this.$router.push({path: '/'});
     },
     displayMessage(type, message) {
       if (type === 'success') {
@@ -175,6 +189,7 @@ export default {
   }
 };
 </script>
+
 
 <style>
 .manage-lots-background {

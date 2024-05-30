@@ -7,7 +7,7 @@
         <router-link to="/lots">Lots</router-link> |
         <router-link v-if="selectedUser" to="/manage-lots">Gestion des Lots</router-link> |
       </div>
-      <select v-model="selectedUser" @change="userChanged" class="user-select">
+      <select v-model="selectedUserId" @change="userChanged" class="user-select">
         <option value="">Non connecté</option>
         <option v-for="user in users" :key="user.id" :value="user.id">{{ user.name }}</option>
       </select>
@@ -23,27 +23,35 @@ export default {
   data() {
     return {
       users: [],
-      selectedUser: null
+      selectedUser: null,
+      selectedUserId: null
     };
   },
   async created() {
     try {
       this.users = await UserService.getAllUsers();
-      this.selectedUser = UserService.getSelectedUser();
-
-      if (this.selectedUser) {
-        const selectedUserName = this.users.find(user => user.id === Number(this.selectedUser))?.name;
-        console.log("Selected user on created:", this.selectedUser, selectedUserName);
-      } else {
-        console.log("No user selected on created");
+      const selectedUser = UserService.getSelectedUser();
+      if (selectedUser) {
+        this.selectedUser = selectedUser;
+        this.selectedUserId = selectedUser.id;
       }
     } catch (error) {
       console.error('Error fetching users:', error);
     }
   },
+  watch: {
+    selectedUserId(newId) {
+      if (newId) {
+        this.selectedUser = this.users.find(user => user.id === Number(newId));
+        UserService.setSelectedUser(this.selectedUser);
+      } else {
+        this.selectedUser = null;
+        UserService.setSelectedUser(null);
+      }
+    }
+  },
   methods: {
     userChanged() {
-      UserService.setSelectedUser(this.selectedUser);
       this.$router.go(); // Reload the page by programmatically refreshing the router
     }
   }

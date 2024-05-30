@@ -6,7 +6,6 @@ class UserService {
     async getAllUsers() {
         try {
             const response = await axios.get(BASE_URL);
-            console.log('API response:', response.data); // Ajouté pour vérifier la réponse API
             return response.data;
         } catch (error) {
             console.error('Error fetching users:', error);
@@ -14,14 +13,15 @@ class UserService {
         }
     }
 
-
     getSelectedUser() {
-        return localStorage.getItem('selectedUser');
+        const user = localStorage.getItem('selectedUser');
+        return user ? JSON.parse(user) : null;
     }
 
-    setSelectedUser(userId) {
-        localStorage.setItem('selectedUser', userId);
+    setSelectedUser(user) {
+        localStorage.setItem('selectedUser', JSON.stringify(user));
     }
+
 }
 
 export default new UserService();
