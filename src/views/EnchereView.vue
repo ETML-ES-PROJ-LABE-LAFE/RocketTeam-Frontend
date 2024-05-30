@@ -5,21 +5,10 @@
       <div v-if="loading">Chargement en cours...</div>
       <div v-else>
         <div v-if="lot">
-          <LotItem :lot="lot" />
-          <ActionButtons
-              :lot="lot"
-              :selectedUser="selectedUser"
-              @go-back="goBack"
-              @place-bid="showBidModal"
-              @remove-lot="removeLot"
-          />
-          <div v-if="showModal" class="modal">
-            <div class="modal-content">
-              <span class="close" @click="hideBidModal">&times;</span>
-              <h2>Placer une enchère</h2>
-              <input v-model="bidAmount" type="number" placeholder="Entrez votre offre" />
-              <button @click="placeBid">Soumettre</button>
-            </div>
+          <LotItem :lot="lot" :showImage="true" />
+          <div class="button-container">
+            <button @click="placeBid">Enchérir</button>
+            <button @click="goBack">Retour à la liste</button>
           </div>
         </div>
         <div v-else>
@@ -34,23 +23,16 @@
 import { ref, onMounted } from 'vue';
 import LotsService from '@/Services/LotsServices.js';
 import LotItem from '@/components/LotItem.vue';
-import ActionButtons from '@/components/ActionButtons.vue';
-import EnchereService from '@/Services/EnchereService.js';
-import UserService from '@/Services/UserService.js';
 
 export default {
   name: 'EnchereView',
   components: {
-    LotItem,
-    ActionButtons
+    LotItem
   },
   props: ['encodedId'],
   setup(props) {
     const lot = ref(null);
     const loading = ref(true);
-    const showModal = ref(false);
-    const bidAmount = ref(0);
-    const selectedUser = ref(UserService.getSelectedUser());
 
     const decodeId = (encodedId) => {
       return atob(encodedId);
@@ -67,57 +49,20 @@ export default {
       }
     });
 
-    const placeBid = async () => {
-      if (!selectedUser.value) {
-        alert("Vous devez être connecté pour placer une enchère.");
-        return;
-      }
-      if (parseFloat(bidAmount.value) > lot.value.highestBid) {
-        try {
-          const enchere = {
-            amount: parseFloat(bidAmount.value),
-            timestamp: new Date(),
-            lot: lot.value,
-            customer: {id: selectedUser.value}
-          };
-          await EnchereService.placeEnchere(enchere);
-          lot.value.highestBid = parseFloat(bidAmount.value);
-          hideBidModal();
-        } catch (error) {
-          console.error("Error placing bid:", error);
-        }
-      } else {
-        alert("Votre offre doit être supérieure à l'offre la plus élevée.");
-      }
-    };
-
-    const showBidModal = () => {
-      showModal.value = true;
-    };
-
-    const hideBidModal = () => {
-      showModal.value = false;
+    const placeBid = () => {
+      // Logic to place a bid
     };
 
     const goBack = () => {
-      window.history.back();
+      this.$router.push({name: 'lots'});
     };
 
-    const removeLot = () => {
-      console.log("Removing lot");
-    };
-
+    //console.log(lot);
     return {
       lot,
       loading,
-      showModal,
-      bidAmount,
-      selectedUser,
       placeBid,
-      showBidModal,
-      hideBidModal,
-      goBack,
-      removeLot
+      goBack
     };
   }
 };
@@ -144,7 +89,6 @@ export default {
 }
 
 h2 {
-  color: black;
   margin-bottom: 20px;
 }
 
@@ -165,43 +109,5 @@ button {
 
 button:hover {
   background-color: #2980b9;
-}
-
-.modal {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgb(0, 0, 0);
-  background-color: rgba(0, 0, 0, 0.4);
-}
-
-.modal-content {
-  background-color: #fefefe;
-  margin: auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%;
-  max-width: 500px;
-}
-
-.close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
 }
 </style>
