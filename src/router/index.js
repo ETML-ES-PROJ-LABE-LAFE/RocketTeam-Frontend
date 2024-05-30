@@ -22,7 +22,7 @@ const routes = [
     component: ListLotsView
   },
   {
-    path: '/enchere/:id',
+    path: '/enchere/:encodedId',
     name: 'enchere',
     component: EnchereView, // Mise à jour du nom du composant
     props: true

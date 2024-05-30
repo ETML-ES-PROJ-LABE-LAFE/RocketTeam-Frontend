@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import {ref, onMounted} from 'vue';
+import { ref, onMounted } from 'vue';
 import LotsService from '@/Services/LotsServices.js';
 import LotItem from '@/components/LotItem.vue';
 import ActionButtons from '@/components/ActionButtons.vue';
@@ -44,7 +44,7 @@ export default {
     LotItem,
     ActionButtons
   },
-  props: ['id'],
+  props: ['encodedId'],
   setup(props) {
     const lot = ref(null);
     const loading = ref(true);
@@ -52,9 +52,14 @@ export default {
     const bidAmount = ref(0);
     const selectedUser = ref(UserService.getSelectedUser());
 
+    const decodeId = (encodedId) => {
+      return atob(encodedId);
+    };
+
     onMounted(async () => {
       try {
-        lot.value = await LotsService.getLotById(props.id);
+        const lotId = decodeId(props.encodedId);
+        lot.value = await LotsService.getLotById(lotId);
       } catch (error) {
         console.error("Error fetching lot details:", error);
       } finally {

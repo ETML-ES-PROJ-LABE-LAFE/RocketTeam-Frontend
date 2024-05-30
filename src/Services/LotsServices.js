@@ -3,6 +3,14 @@ import axios from 'axios';
 const BASE_URL = "http://localhost:8080/lots";
 
 class LotsServices {
+    encodeId(id) {
+        return btoa(id);
+    }
+
+    decodeId(encodedId) {
+        return atob(encodedId);
+    }
+
     async getAllLots() {
         try {
             const response = await axios.get(BASE_URL);
@@ -15,7 +23,8 @@ class LotsServices {
 
     async getLotById(lotId) {
         try {
-            const response = await axios.get(`${BASE_URL}/${lotId}`);
+            const encodedId = this.encodeId(lotId);
+            const response = await axios.get(`${BASE_URL}/${encodedId}`);
             return response.data;
         } catch (error) {
             console.error('Error fetching lot by ID:', error);
@@ -49,7 +58,8 @@ class LotsServices {
 
     async deleteLot(lotId) {
         try {
-            await axios.delete(`${BASE_URL}/${lotId}`);
+            const encodedId = this.encodeId(lotId);
+            await axios.delete(`${BASE_URL}/${encodedId}`);
         } catch (error) {
             console.error('Error deleting lot:', error);
             throw new Error('Failed to delete lot');
@@ -58,7 +68,8 @@ class LotsServices {
 
     async endAuction(lotId) {
         try {
-            const response = await axios.put(`${BASE_URL}/${lotId}/endAuction`);
+            const encodedId = this.encodeId(lotId);
+            const response = await axios.put(`${BASE_URL}/${encodedId}/endAuction`);
             return response.data;
         } catch (error) {
             console.error('Error ending auction:', error);
@@ -75,7 +86,6 @@ class LotsServices {
             throw new Error('Failed to fetch lots by customer');
         }
     }
-
 }
 
 export default new LotsServices();
