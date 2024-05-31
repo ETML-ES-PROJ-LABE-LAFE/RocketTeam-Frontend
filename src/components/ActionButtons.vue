@@ -1,7 +1,7 @@
 <template>
   <div class="action-buttons">
     <button class="btn btn-blue" @click="goBack">Retour à la liste</button>
-    <button class="btn btn-green" @click="placeBid" :disabled="!selectedUser">Enchérir</button>
+    <button class="btn btn-green" @click="placeBid" :disabled="!selectedCustomer">Enchérir</button>
   </div>
 </template>
 
@@ -12,7 +12,7 @@ export default {
       type: Object,
       required: true,
     },
-    selectedUser: {
+    selectedCustomer: {
       type: Object,
       default: null,
     },

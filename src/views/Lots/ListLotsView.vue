@@ -21,7 +21,7 @@ import LotsService from "@/Services/LotsServices.js";
 import CategorySelector from "@/components/CategorySelector.vue";
 import LotsList from "@/components/LotsList.vue";
 import CategoryService from "@/Services/CategoryServices.js";
-import UserService from "@/Services/UserService.js";
+import CustomersServices from "@/Services/CustomersServices.js";
 
 export default {
   name: 'ListLotsView',
@@ -35,7 +35,7 @@ export default {
       categories: [],
       selectedCategory: null,
       selectedSubcategory: '',
-      selectedUser: null,
+      selectedCustomer: null,
       loading: true,
       categoryError: null,
       lotsError: null
@@ -52,7 +52,7 @@ export default {
       this.displayError('categoryError', "Erreur lors du chargement des catégories, veuillez essayer plus tard");
     }
 
-    this.selectedUser = UserService.getSelectedUser(); // Get the selected user from UserService
+    this.selectedCustomer = CustomersServices.getSelectedCustomer();
   },
   methods: {
     displayError(errorType, message) {

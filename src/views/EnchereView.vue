@@ -8,7 +8,7 @@
           <LotItem :lot="lot" :showImage="true" />
           <ActionButtons
               :lot="lot"
-              :selectedUser="selectedUser"
+              :selectedCustomer="selectedCustomer"
               @go-back="goBack"
               @place-bid="showBidModal"
               @remove-lot="removeLot"
@@ -36,7 +36,7 @@ import LotsService from '@/Services/LotsServices.js';
 import LotItem from '@/components/LotItem.vue';
 import ActionButtons from '@/components/ActionButtons.vue';
 import EnchereService from '@/Services/EnchereService.js';
-import UserService from '@/Services/UserService.js';
+import CustomersServices from '@/Services/CustomersServices.js';
 
 export default {
   name: 'EnchereView',
@@ -50,7 +50,7 @@ export default {
     const loading = ref(true);
     const showModal = ref(false);
     const bidAmount = ref(0);
-    const selectedUser = ref(UserService.getSelectedUser());
+    const selectedCustomer = ref(CustomersServices.getSelectedCustomer());
 
     const decodeId = (encodedId) => {
       return atob(encodedId);
@@ -68,7 +68,7 @@ export default {
     });
 
     const placeBid = async () => {
-      if (!selectedUser.value) {
+      if (!selectedCustomer.value) {
         alert("Vous devez être connecté pour placer une enchère.");
         return;
       }
@@ -78,7 +78,7 @@ export default {
             amount: parseFloat(bidAmount.value),
             timestamp: new Date().toISOString(),
             lot: { id: lot.value.id },
-            customer: { id: selectedUser.value.id }
+            customer: { id: selectedCustomer.value.id }
           };
           await EnchereService.placeEnchere(enchere);
           lot.value.highestBid = parseFloat(bidAmount.value);
@@ -112,7 +112,7 @@ export default {
       loading,
       showModal,
       bidAmount,
-      selectedUser,
+      selectedCustomer,
       placeBid,
       showBidModal,
       hideBidModal,
@@ -148,9 +148,6 @@ h2 {
   margin-bottom: 20px;
 }
 
-.button-container {
-  margin-top: 20px;
-}
 
 button {
   margin: 10px;

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="!selectedUser">
+    <div v-if="!selectedCustomer">
       <h2>Vous devez être connecté pour accéder à cette page.</h2>
       <router-link to="/"><button>Retour à l'accueil</button></router-link>
     </div>
@@ -62,7 +62,7 @@ export default {
     mainCategories: Array,
     localLot: Object,
     mode: String,
-    selectedUser: Object
+    selectedCustomer: Object
   },
   data() {
     return {

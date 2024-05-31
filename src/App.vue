@@ -5,12 +5,12 @@
         <router-link to="/">Home</router-link> |
         <router-link to="/about">About</router-link> |
         <router-link to="/lots">Lots</router-link> |
-        <router-link v-if="selectedUser" to="/manage-lots">Gestion des Lots</router-link> |
+        <router-link v-if="selectedCustomer" to="/manage-lots">Gestion des Lots</router-link> |
       </div>
-      <div class="user-select-container">
-        <select v-model="selectedUserId" @change="userChanged" class="user-select">
+      <div class="customer-select-container">
+        <select v-model="selectedCustomerId" @change="customerChanged" class="customer-select">
           <option value="">Non connecté</option>
-          <option v-for="user in users" :key="user.id" :value="user.id">{{ user.name }}</option>
+          <option v-for="customer in customers" :key="customer.id" :value="customer.id">{{ customer.name }}</option>
         </select>
       </div>
     </div>
@@ -19,41 +19,41 @@
 </template>
 
 <script>
-import UserService from '@/Services/UserService.js';
+import CustomersServices from '@/Services/CustomersServices.js';
 
 export default {
   data() {
     return {
-      users: [],
-      selectedUser: null,
-      selectedUserId: null
+      customers: [],
+      selectedCustomer: null,
+      selectedCustomerId: null
     };
   },
   async created() {
     try {
-      this.users = await UserService.getAllUsers();
-      const selectedUser = UserService.getSelectedUser();
-      if (selectedUser) {
-        this.selectedUser = selectedUser;
-        this.selectedUserId = selectedUser.id;
+      this.customers = await CustomersServices.getAllCustomers();
+      const selectedCustomer = CustomersServices.getSelectedCustomer();
+      if (selectedCustomer) {
+        this.selectedCustomer = selectedCustomer;
+        this.selectedCustomerId = selectedCustomer.id;
       }
     } catch (error) {
-      console.error('Error fetching users:', error);
+      console.error('Error fetching customers:', error);
     }
   },
   watch: {
-    selectedUserId(newId) {
+    selectedCustomerId(newId) {
       if (newId) {
-        this.selectedUser = this.users.find(user => user.id === Number(newId));
-        UserService.setSelectedUser(this.selectedUser);
+        this.selectedCustomer = this.customers.find(customer => customer.id === Number(newId));
+        CustomersServices.setSelectedCustomer(this.selectedCustomer);
       } else {
-        this.selectedUser = null;
-        UserService.setSelectedUser(null);
+        this.selectedCustomer = null;
+        CustomersServices.setSelectedCustomer(null);
       }
     }
   },
   methods: {
-    userChanged() {
+    customerChanged() {
       this.$router.go(); // Reload the page by programmatically refreshing the router
     }
   }
@@ -78,7 +78,7 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  min-height: 100vh; /* Assure que l'app occupe au moins toute la hauteur de la fenêtre */
+  min-height: 100vh;
 }
 
 nav {
@@ -117,12 +117,12 @@ nav a:hover {
   color: #fff; /* Texte reste blanc lors du survol */
 }
 
-.user-select-container {
+.customer-select-container {
   display: flex;
   align-items: center;
 }
 
-.user-select {
+.customer-select {
   padding: 8px 12px;
   border-radius: 5px;
   width: 250px; /* Largeur augmentée pour meilleure lisibilité */
@@ -135,7 +135,7 @@ nav a:hover {
   transition: border-color 0.3s, box-shadow 0.3s; /* Animation douce pour focus */
 }
 
-.user-select:focus {
+.customer-select:focus {
   border-color: #3498db; /* Couleur de la bordure au focus */
   box-shadow: 0 0 5px rgba(52, 152, 219, 0.5); /* Ombre portée au focus */
 }
