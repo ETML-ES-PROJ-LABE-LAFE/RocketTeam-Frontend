@@ -1,7 +1,7 @@
 <template>
   <div class="manage-lots-background">
     <div class="center-container">
-      <div v-if="!selectedUser">
+      <div v-if="!selectedCustomer">
         <h2>Vous devez être connecté pour accéder à cette page.</h2>
         <router-link to="/">
           <button>Retour à l'accueil</button>
@@ -27,7 +27,7 @@
             :selectedMainCategory="selectedMainCategory"
             :localLot="localLot"
             :mode="mode"
-            :selectedUser="selectedUser"
+            :selectedCustomer="selectedCustomer"
             @fetchSubcategories="fetchSubcategories"
             @handleSubmit="handleSubmit"
             @updateLocalLot="updateLocalLot"
@@ -53,7 +53,7 @@ import LotsList from "@/components/LotsList.vue";
 import LotManagement from "@/components/LotManagement.vue";
 import LotsService from "@/Services/LotsServices.js";
 import CategoryService from "@/Services/CategoryServices.js";
-import UserService from "@/Services/UserService.js";
+import CustomersServices from "@/Services/CustomersServices.js";
 
 export default {
   components: {
@@ -77,14 +77,14 @@ export default {
       mode: null,
       error: null,
       success: null,
-      selectedUser: null,
+      selectedCustomer: null,
       filterStatus: 'active'
     };
   },
   async created() {
-    this.selectedUser = UserService.getSelectedUser();
+    this.selectedCustomer = CustomersServices.getSelectedCustomer();
     await this.fetchCategories();
-    if (this.selectedUser) {
+    if (this.selectedCustomer) {
       await this.fetchLots();
     }
   },
@@ -106,11 +106,11 @@ export default {
     },
     async fetchLots() {
       try {
-        const selectedUserObj = UserService.getSelectedUser();
-        if (!selectedUserObj) {
+        const selectedCustomerObj = CustomersServices.getSelectedCustomer();
+        if (!selectedCustomerObj) {
           throw new Error('Utilisateur non sélectionné ou invalide');
         }
-        this.lots = await LotsService.getLotsByCustomer(selectedUserObj);
+        this.lots = await LotsService.getLotsByCustomer(selectedCustomerObj);
         this.filterLots();
       } catch (error) {
         this.displayMessage('error', "Erreur lors du chargement des lots");
@@ -130,11 +130,11 @@ export default {
     },
     async handleSubmit() {
       try {
-        const selectedUserObj = UserService.getSelectedUser();
-        if (!selectedUserObj) {
+        const selectedCustomerObj = CustomersServices.getSelectedCustomer();
+        if (!selectedCustomerObj) {
           throw new Error('Utilisateur non sélectionné ou invalide');
         }
-        this.localLot.customer = {id: selectedUserObj.id};
+        this.localLot.customer = {id: selectedCustomerObj.id};
         this.localLot.highestBid = parseFloat(this.localLot.initialPrice); // Convert highestBid to a number
         this.localLot.active = true; // Set active to true
         console.log("localLot to be added:", this.localLot);
