@@ -11,15 +11,23 @@
               :selectedCustomer="selectedCustomer"
               @go-back="goBack"
               @place-bid="showBidModal"
-              @remove-lot="removeLot"
           />
           <div v-if="showModal" class="modal">
             <div class="modal-content">
               <span class="close" @click="hideBidModal">&times;</span>
               <h2>Placer une enchère</h2>
-              <input v-model="bidAmount" type="number" placeholder="Entrez votre offre" />
+              <input
+                  v-model="bidAmount"
+                  type="number"
+                  :min="lot.highestBid + 1"
+                  placeholder="Entrez votre offre"
+              />
               <button @click="placeBid">Soumettre</button>
+              <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
             </div>
+          </div>
+          <div v-if="successMessage" class="success-message">
+            {{ successMessage }}
           </div>
         </div>
         <div v-else>
@@ -50,6 +58,8 @@ export default {
     const loading = ref(true);
     const showModal = ref(false);
     const bidAmount = ref(0);
+    const errorMessage = ref('');
+    const successMessage = ref('');
     const selectedCustomer = ref(CustomersServices.getSelectedCustomer());
 
     const decodeId = (encodedId) => {
@@ -68,8 +78,10 @@ export default {
     });
 
     const placeBid = async () => {
+      errorMessage.value = '';
+      successMessage.value = '';
       if (!selectedCustomer.value) {
-        alert("Vous devez être connecté pour placer une enchère.");
+        errorMessage.value = "Vous devez être connecté pour placer une enchère.";
         return;
       }
       if (parseFloat(bidAmount.value) > lot.value.highestBid) {
@@ -82,16 +94,19 @@ export default {
           };
           await EnchereService.placeEnchere(enchere);
           lot.value.highestBid = parseFloat(bidAmount.value);
+          successMessage.value = "Votre enchère a été placée avec succès.";
           hideBidModal();
         } catch (error) {
           console.error("Error placing bid:", error);
+          errorMessage.value = "Une erreur s'est produite lors de la soumission de votre enchère.";
         }
       } else {
-        alert("Votre offre doit être supérieure à l'offre la plus élevée.");
+        errorMessage.value = "Votre offre doit être supérieure à l'offre la plus élevée.";
       }
     };
 
     const showBidModal = () => {
+      bidAmount.value = lot.value.highestBid + 1;
       showModal.value = true;
     };
 
@@ -103,21 +118,18 @@ export default {
       window.history.back();
     };
 
-    const removeLot = () => {
-      console.log("Removing lot");
-    };
-
     return {
       lot,
       loading,
       showModal,
       bidAmount,
+      errorMessage,
+      successMessage,
       selectedCustomer,
       placeBid,
       showBidModal,
       hideBidModal,
-      goBack,
-      removeLot
+      goBack
     };
   }
 };
@@ -200,5 +212,20 @@ button:hover {
   color: black;
   text-decoration: none;
   cursor: pointer;
+}
+
+.error {
+  color: red;
+  margin-top: 10px;
+}
+
+.success-message {
+  color: green;
+  margin-top: 20px;
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  padding: 10px;
+  border-radius: 5px;
+  display: inline-block;
 }
 </style>
