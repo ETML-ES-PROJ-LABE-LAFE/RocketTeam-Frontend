@@ -5,7 +5,7 @@
       <div v-if="loading">Chargement en cours...</div>
       <div v-else>
         <div v-if="lot">
-          <LotItem :lot="lot" :showImage="true" />
+
           <ActionButtons
               :lot="lot"
               :selectedUser="selectedUser"
@@ -33,7 +33,7 @@
 <script>
 import { ref, onMounted } from 'vue';
 import LotsService from '@/Services/LotsServices.js';
-import LotItem from '@/components/LotItem.vue';
+/*import LotItem from '@/components/LotItem.vue';*/
 import ActionButtons from '@/components/ActionButtons.vue';
 import EnchereService from '@/Services/EnchereService.js';
 import UserService from '@/Services/UserService.js';
@@ -41,7 +41,7 @@ import UserService from '@/Services/UserService.js';
 export default {
   name: 'EnchereView',
   components: {
-    LotItem,
+    /*LotItem,*/
     ActionButtons
   },
   props: ['encodedId'],

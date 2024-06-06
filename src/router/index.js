@@ -2,8 +2,9 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import AboutView from "@/views/AboutView.vue";
 import ListLotsView from '../views/Lots/ListLotsView.vue';
-import EnchereView from '../views/EnchereView.vue'; // Import du composant renommé
-import ManageLotView from '../views/Lots/ManageLotView.vue'; // Import de la nouvelle vue de gestion des lots
+import EnchereView from '../views/EnchereView.vue';
+import ManageLotView from '../views/Lots/ManageLotView.vue';
+import DashboardView from '../views/DashboardView.vue'; // Import de la nouvelle vue
 
 const routes = [
   {
@@ -14,7 +15,7 @@ const routes = [
   {
     path: '/about',
     name: 'about',
-    component: AboutView  // Assurez-vous que cette ligne est correcte
+    component: AboutView
   },
   {
     path: '/lots',
@@ -30,14 +31,30 @@ const routes = [
   {
     path: '/manage-lots',
     name: 'manage-lots',
-    component: ManageLotView // Nouvelle route pour la gestion des lots
+    component: ManageLotView
+  },
+  {
+    path: '/dashboard',
+    name: 'dashboard',
+    component: DashboardView,
+    meta: { requiresAuth: true } // Protection d'accès
   }
-
 ];
 
 const router = createRouter({
   history: createWebHashHistory(),
   routes
+});
+
+// Navigation guard pour protéger les routes nécessitant une authentification
+router.beforeEach((to, from, next) => {
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+  const currentUser = JSON.parse(localStorage.getItem('selectedUser')); // Obtention de l'utilisateur depuis le localStorage
+  if (requiresAuth && !currentUser) {
+    next('/');
+  } else {
+    next();
+  }
 });
 
 export default router;
