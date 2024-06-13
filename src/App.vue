@@ -7,11 +7,15 @@
         <router-link to="/lots">Lots</router-link> |
         <router-link v-if="selectedCustomer" to="/manage-lots">Gestion des Lots</router-link> |
       </div>
-      <div class="customer-select-container">
+      <div class="customer-info">
         <select v-model="selectedCustomerId" @change="customerChanged" class="customer-select">
           <option value="">Non connecté</option>
           <option v-for="customer in customers" :key="customer.id" :value="customer.id">{{ customer.name }}</option>
         </select>
+        <div v-if="selectedCustomer" class="balance-info">
+          <span>Solde: {{ selectedCustomer.balance - selectedCustomer.reservedBalance }}</span>
+          <button @click="addFunds">Ajouter des fonds</button>
+        </div>
       </div>
     </div>
   </nav>
@@ -55,6 +59,16 @@ export default {
   methods: {
     customerChanged() {
       this.$router.go(); // Reload the page by programmatically refreshing the router
+    },
+    async addFunds() {
+      const amount = parseFloat(prompt("Entrez le montant à ajouter:"));
+      if (!isNaN(amount) && amount > 0) {
+        this.selectedCustomer.balance += amount;
+        await CustomersServices.updateCustomerBalance(this.selectedCustomer);
+        this.$router.go(); // Refresh the router to update the balance
+      } else {
+        alert("Veuillez entrer un montant valide.");
+      }
     }
   }
 };
@@ -117,7 +131,7 @@ nav a:hover {
   color: #fff; /* Texte reste blanc lors du survol */
 }
 
-.customer-select-container {
+.customer-info {
   display: flex;
   align-items: center;
 }
@@ -138,5 +152,30 @@ nav a:hover {
 .customer-select:focus {
   border-color: #3498db; /* Couleur de la bordure au focus */
   box-shadow: 0 0 5px rgba(52, 152, 219, 0.5); /* Ombre portée au focus */
+}
+
+.balance-info {
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+  color: #fff;
+}
+
+.balance-info span {
+  margin-right: 10px;
+}
+
+button {
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: none;
+  background-color: #3498db;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #2980b9;
 }
 </style>

@@ -11,15 +11,24 @@
               :selectedCustomer="selectedCustomer"
               @go-back="goBack"
               @place-bid="showBidModal"
-              @remove-lot="removeLot"
           />
           <div v-if="showModal" class="modal">
             <div class="modal-content">
               <span class="close" @click="hideBidModal">&times;</span>
               <h2>Placer une enchère</h2>
-              <input v-model="bidAmount" type="number" placeholder="Entrez votre offre" />
+              <input
+                  v-model="bidAmount"
+                  type="number"
+                  :min="lot.highestBid + 1"
+                  :max="selectedCustomer ? selectedCustomer.balance : null"
+                  placeholder="Entrez votre offre"
+              />
               <button @click="placeBid">Soumettre</button>
+              <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
             </div>
+          </div>
+          <div v-if="successMessage" class="success-message">
+            {{ successMessage }}
           </div>
         </div>
         <div v-else>
@@ -50,16 +59,31 @@ export default {
     const loading = ref(true);
     const showModal = ref(false);
     const bidAmount = ref(0);
+    const errorMessage = ref('');
+    const successMessage = ref('');
     const selectedCustomer = ref(CustomersServices.getSelectedCustomer());
 
     const decodeId = (encodedId) => {
       return atob(encodedId);
     };
 
+    const updateCustomerBalance = async () => {
+      if (selectedCustomer.value) {
+        try {
+          const totalBidAmount = await EnchereService.getTotalBidAmountByCustomer(selectedCustomer.value.id);
+          selectedCustomer.value.balance = selectedCustomer.value.originalBalance - totalBidAmount;
+          CustomersServices.setSelectedCustomer(selectedCustomer.value);
+        } catch (error) {
+          console.error('Failed to update customer balance:', error);
+        }
+      }
+    };
+
     onMounted(async () => {
       try {
         const lotId = decodeId(props.encodedId);
         lot.value = await LotsService.getLotById(lotId);
+        await updateCustomerBalance();
       } catch (error) {
         console.error("Error fetching lot details:", error);
       } finally {
@@ -68,30 +92,57 @@ export default {
     });
 
     const placeBid = async () => {
+      errorMessage.value = '';
+      successMessage.value = '';
       if (!selectedCustomer.value) {
-        alert("Vous devez être connecté pour placer une enchère.");
+        errorMessage.value = "Vous devez être connecté pour placer une enchère.";
         return;
       }
-      if (parseFloat(bidAmount.value) > lot.value.highestBid) {
-        try {
+
+      try {
+        const totalBidAmountResponse = await EnchereService.getTotalBidAmountByCustomer(selectedCustomer.value.id);
+        const totalBidAmount = Number(totalBidAmountResponse);
+
+        console.log("Selected Customer:", selectedCustomer.value);
+        console.log("Total Bid Amount response:", totalBidAmountResponse);
+        console.log("Total Bid Amount:", totalBidAmount);
+
+        const availableBalance = Number(selectedCustomer.value.balance) - totalBidAmount;
+        console.log("Available Balance:", availableBalance);
+        console.log("Bid Amount before submitting:", bidAmount.value); // Ajout du log pour le montant de l'enchère
+
+        if (parseFloat(bidAmount.value) > lot.value.highestBid && parseFloat(bidAmount.value) <= availableBalance) {
           const enchere = {
-            amount: parseFloat(bidAmount.value),
+            amount: Number(bidAmount.value),
             timestamp: new Date().toISOString(),
             lot: { id: lot.value.id },
             customer: { id: selectedCustomer.value.id }
           };
+          console.log("Enchere object before submitting:", enchere); // Ajout du log pour l'objet enchère
           await EnchereService.placeEnchere(enchere);
           lot.value.highestBid = parseFloat(bidAmount.value);
+          successMessage.value = "Votre enchère a été placée avec succès.";
+          await updateCustomerBalance();
           hideBidModal();
-        } catch (error) {
-          console.error("Error placing bid:", error);
+        } else {
+          if (parseFloat(bidAmount.value) <= lot.value.highestBid) {
+            errorMessage.value = "Votre offre doit être supérieure à l'offre la plus élevée.";
+          } else {
+            errorMessage.value = "Votre offre dépasse votre solde disponible.";
+          }
         }
-      } else {
-        alert("Votre offre doit être supérieure à l'offre la plus élevée.");
+      } catch (error) {
+        console.error("Error placing bid:", error);
+        errorMessage.value = error.response.data.message;
       }
     };
 
+
+
+
+
     const showBidModal = () => {
+      bidAmount.value = lot.value.highestBid + 1;
       showModal.value = true;
     };
 
@@ -103,24 +154,22 @@ export default {
       window.history.back();
     };
 
-    const removeLot = () => {
-      console.log("Removing lot");
-    };
-
     return {
       lot,
       loading,
       showModal,
       bidAmount,
+      errorMessage,
+      successMessage,
       selectedCustomer,
       placeBid,
       showBidModal,
       hideBidModal,
-      goBack,
-      removeLot
+      goBack
     };
   }
 };
+
 </script>
 
 <style>
@@ -147,7 +196,6 @@ h2 {
   color: black;
   margin-bottom: 20px;
 }
-
 
 button {
   margin: 10px;
@@ -200,5 +248,20 @@ button:hover {
   color: black;
   text-decoration: none;
   cursor: pointer;
+}
+
+.error {
+  color: red;
+  margin-top: 10px;
+}
+
+.success-message {
+  color: green;
+  margin-top: 20px;
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  padding: 10px;
+  border-radius: 5px;
+  display: inline-block;
 }
 </style>
