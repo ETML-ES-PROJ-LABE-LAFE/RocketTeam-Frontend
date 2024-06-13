@@ -91,6 +91,15 @@ class LotsServices {
             throw new Error('Nous n\'avons pas réussi à afficher vos lots, veuillez réessayer plus tard');
         }
     }
+
+    async getPendingLots() {
+        try {
+            const response = await axios.get(`${BASE_URL}/pending`);
+            return response.data;
+        } catch (error) {
+            throw new Error('Erreur lors du chargement des lots en attente de paiement');
+        }
+    }
 }
 
 export default new LotsServices();

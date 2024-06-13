@@ -12,7 +12,7 @@
         <img src="@/assets/auction_logo.png" alt="Logo" class="logo">
       </div>
       <div class="customer-section">
-        <NotificationBell />
+        <NotificationBell :userId="selectedCustomerId" />
         <div class="customer-info">
           <select v-model="selectedCustomerId" @change="customerChanged" class="customer-select">
             <option value="">Non connecté</option>

@@ -2,11 +2,15 @@
   <div class="notification-bell">
     <button @click="toggleNotifications">
       <i class="fa fa-bell"></i>
-      <span v-if="unreadCount">{{ unreadCount }}</span>
+      <span v-if="unreadCount" class="unread-count">{{ unreadCount }}</span>
     </button>
     <div v-if="showNotifications" class="notification-list">
-      <div v-for="notification in notifications" :key="notification.id" class="notification">
-        {{ notification.message }}
+      <div v-for="notification in notifications" :key="notification.id" class="notification-item">
+        <img v-if="notification.user.avatarUrl" :src="notification.user.avatarUrl" alt="Avatar" class="avatar">
+        <div class="notification-content">
+          <p class="message">{{ notification.message }}</p>
+          <p class="timestamp">{{ timeAgo(notification.timestamp) }}</p>
+        </div>
       </div>
     </div>
   </div>
@@ -14,8 +18,10 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
+import moment from 'moment';
 
 export default {
+  props: ['userId'],
   data() {
     return {
       showNotifications: false
@@ -31,9 +37,12 @@ export default {
     ...mapActions(['fetchNotifications']),
     toggleNotifications() {
       this.showNotifications = !this.showNotifications;
-      if (this.showNotifications) {
-        this.fetchNotifications();
+      if (this.showNotifications && this.userId) {
+        this.fetchNotifications(this.userId);
       }
+    },
+    timeAgo(timestamp) {
+      return moment(timestamp).fromNow();
     }
   }
 };
@@ -53,7 +62,7 @@ export default {
   color: yellow; /* Changez la couleur ici */
 }
 
-.notification-bell span {
+.unread-count {
   position: absolute;
   top: 0;
   right: 0;
@@ -75,12 +84,37 @@ export default {
   z-index: 1000;
 }
 
-.notification {
+.notification-item {
+  display: flex;
+  align-items: center;
   padding: 10px;
   border-bottom: 1px solid #eee;
 }
 
-.notification:last-child {
+.notification-item:last-child {
   border-bottom: none;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.notification-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.message {
+  margin: 0;
+  font-weight: bold;
+}
+
+.timestamp {
+  margin: 0;
+  font-size: 0.8rem;
+  color: gray;
 }
 </style>
