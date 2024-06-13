@@ -1,4 +1,4 @@
-import axios from 'axios';
+import NotificationService from '@/Services/NotificationService.js';
 
 const state = {
     notifications: []
@@ -10,16 +10,29 @@ const getters = {
 };
 
 const actions = {
-    async fetchNotifications({ commit }) {
-        const response = await axios.get('/api/notifications');
-        commit('setNotifications', response.data);
+    async fetchNotifications({ commit }, userId) {
+        try {
+            const notifications = await NotificationService.getNotificationsByUser(userId);
+            commit('setNotifications', notifications);
+        } catch (error) {
+            console.error('Error fetching notifications:', error);
+        }
     },
     async addNotification({ commit }, notification) {
-        const response = await axios.post('/api/notifications', notification);
-        commit('newNotification', response.data);
+        try {
+            const newNotification = await NotificationService.addNotification(notification);
+            commit('newNotification', newNotification);
+        } catch (error) {
+            console.error('Error adding notification:', error);
+        }
     },
-    markAsRead({ commit }, id) {
-        commit('markRead', id);
+    async markAsRead({ commit }, id) {
+        try {
+            await NotificationService.markAsRead(id);
+            commit('markRead', id);
+        } catch (error) {
+            console.error('Error marking notification as read:', error);
+        }
     }
 };
 
