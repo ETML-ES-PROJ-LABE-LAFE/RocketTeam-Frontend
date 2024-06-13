@@ -20,6 +20,7 @@
                   v-model="bidAmount"
                   type="number"
                   :min="lot.highestBid + 1"
+                  :max="selectedCustomer ? selectedCustomer.balance : null"
                   placeholder="Entrez votre offre"
               />
               <button @click="placeBid">Soumettre</button>
@@ -66,10 +67,23 @@ export default {
       return atob(encodedId);
     };
 
+    const updateCustomerBalance = async () => {
+      if (selectedCustomer.value) {
+        try {
+          const totalBidAmount = await EnchereService.getTotalBidAmountByCustomer(selectedCustomer.value.id);
+          selectedCustomer.value.balance = selectedCustomer.value.originalBalance - totalBidAmount;
+          CustomersServices.setSelectedCustomer(selectedCustomer.value);
+        } catch (error) {
+          console.error('Failed to update customer balance:', error);
+        }
+      }
+    };
+
     onMounted(async () => {
       try {
         const lotId = decodeId(props.encodedId);
         lot.value = await LotsService.getLotById(lotId);
+        await updateCustomerBalance();
       } catch (error) {
         console.error("Error fetching lot details:", error);
       } finally {
@@ -84,26 +98,48 @@ export default {
         errorMessage.value = "Vous devez être connecté pour placer une enchère.";
         return;
       }
-      if (parseFloat(bidAmount.value) > lot.value.highestBid) {
-        try {
+
+      try {
+        const totalBidAmountResponse = await EnchereService.getTotalBidAmountByCustomer(selectedCustomer.value.id);
+        const totalBidAmount = Number(totalBidAmountResponse);
+
+        console.log("Selected Customer:", selectedCustomer.value);
+        console.log("Total Bid Amount response:", totalBidAmountResponse);
+        console.log("Total Bid Amount:", totalBidAmount);
+
+        const availableBalance = Number(selectedCustomer.value.balance) - totalBidAmount;
+        console.log("Available Balance:", availableBalance);
+        console.log("Bid Amount before submitting:", bidAmount.value); // Ajout du log pour le montant de l'enchère
+
+        if (parseFloat(bidAmount.value) > lot.value.highestBid && parseFloat(bidAmount.value) <= availableBalance) {
           const enchere = {
-            amount: parseFloat(bidAmount.value),
+            amount: Number(bidAmount.value),
             timestamp: new Date().toISOString(),
             lot: { id: lot.value.id },
             customer: { id: selectedCustomer.value.id }
           };
+          console.log("Enchere object before submitting:", enchere); // Ajout du log pour l'objet enchère
           await EnchereService.placeEnchere(enchere);
           lot.value.highestBid = parseFloat(bidAmount.value);
           successMessage.value = "Votre enchère a été placée avec succès.";
+          await updateCustomerBalance();
           hideBidModal();
-        } catch (error) {
-          console.error("Error placing bid:", error);
-          errorMessage.value = "Une erreur s'est produite lors de la soumission de votre enchère.";
+        } else {
+          if (parseFloat(bidAmount.value) <= lot.value.highestBid) {
+            errorMessage.value = "Votre offre doit être supérieure à l'offre la plus élevée.";
+          } else {
+            errorMessage.value = "Votre offre dépasse votre solde disponible.";
+          }
         }
-      } else {
-        errorMessage.value = "Votre offre doit être supérieure à l'offre la plus élevée.";
+      } catch (error) {
+        console.error("Error placing bid:", error);
+        errorMessage.value = error.response.data.message;
       }
     };
+
+
+
+
 
     const showBidModal = () => {
       bidAmount.value = lot.value.highestBid + 1;
@@ -133,6 +169,7 @@ export default {
     };
   }
 };
+
 </script>
 
 <style>
@@ -159,7 +196,6 @@ h2 {
   color: black;
   margin-bottom: 20px;
 }
-
 
 button {
   margin: 10px;
