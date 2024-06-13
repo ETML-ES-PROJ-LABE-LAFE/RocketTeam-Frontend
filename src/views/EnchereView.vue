@@ -5,7 +5,7 @@
       <div v-if="loading">Chargement en cours...</div>
       <div v-else>
         <div v-if="lot">
-
+          <LotItem :lot="lot" :showImage="true" />
           <ActionButtons
               :lot="lot"
               :selectedCustomer="selectedCustomer"
@@ -40,9 +40,9 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import {ref, onMounted} from 'vue';
 import LotsService from '@/Services/LotsServices.js';
-/*import LotItem from '@/components/LotItem.vue';*/
+import LotItem from '@/components/LotItem.vue';
 import ActionButtons from '@/components/ActionButtons.vue';
 import EnchereService from '@/Services/EnchereService.js';
 import CustomersServices from '@/Services/CustomersServices.js';
@@ -50,7 +50,7 @@ import CustomersServices from '@/Services/CustomersServices.js';
 export default {
   name: 'EnchereView',
   components: {
-    /*LotItem,*/
+    LotItem,
     ActionButtons
   },
   props: ['encodedId'],
@@ -85,9 +85,8 @@ export default {
         lot.value = await LotsService.getLotById(lotId);
         await updateCustomerBalance();
       } catch (error) {
-          this.displayError('LotError', "Erreur lors du chargement des lots, veuillez essayer plus tard");
-        }
-         finally {
+        console.error("Erreur lors du chargement des lots, veuillez essayer plus tard", error);
+      } finally {
         loading.value = false;
       }
     });
@@ -104,22 +103,18 @@ export default {
         const totalBidAmountResponse = await EnchereService.getTotalBidAmountByCustomer(selectedCustomer.value.id);
         const totalBidAmount = Number(totalBidAmountResponse);
 
-        console.log("Selected Customer:", selectedCustomer.value);
-        console.log("Total Bid Amount response:", totalBidAmountResponse);
-        console.log("Total Bid Amount:", totalBidAmount);
-
         const availableBalance = Number(selectedCustomer.value.balance) - totalBidAmount;
         console.log("Available Balance:", availableBalance);
-        console.log("Bid Amount before submitting:", bidAmount.value); // Ajout du log pour le montant de l'enchère
+        console.log("Bid Amount before submitting:", bidAmount.value);
 
         if (parseFloat(bidAmount.value) > lot.value.highestBid && parseFloat(bidAmount.value) <= availableBalance) {
           const enchere = {
             amount: Number(bidAmount.value),
             timestamp: new Date().toISOString(),
-            lot: { id: lot.value.id },
-            customer: { id: selectedCustomer.value.id }
+            lot: {id: lot.value.id},
+            customer: {id: selectedCustomer.value.id}
           };
-          console.log("Enchere object before submitting:", enchere); // Ajout du log pour l'objet enchère
+          console.log("Enchere object before submitting:", enchere);
           await EnchereService.placeEnchere(enchere);
           lot.value.highestBid = parseFloat(bidAmount.value);
           successMessage.value = "Votre enchère a été placée avec succès.";
@@ -134,13 +129,9 @@ export default {
         }
       } catch (error) {
         console.error("Error placing bid:", error);
-        errorMessage.value = error.response.data.message;
+        errorMessage.value = error.response?.data?.message || "Erreur lors de la soumission de l'enchère.";
       }
     };
-
-
-
-
 
     const showBidModal = () => {
       bidAmount.value = lot.value.highestBid + 1;
@@ -170,7 +161,6 @@ export default {
     };
   }
 };
-
 </script>
 
 <style>
