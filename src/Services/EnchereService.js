@@ -8,8 +8,7 @@ class EnchereService {
             const response = await axios.post(BASE_URL, enchere);
             return response.data;
         } catch (error) {
-            console.error('Error placing bid:', error);
-            throw new Error('Failed to place bid');
+            throw new Error('Erreur vous empêchant de placer une enchère, veuillez réessayer plus tard');
         }
     }
 }

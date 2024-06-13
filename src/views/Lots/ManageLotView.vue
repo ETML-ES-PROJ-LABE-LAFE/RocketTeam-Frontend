@@ -137,14 +137,12 @@ export default {
         this.localLot.customer = {id: selectedCustomerObj.id};
         this.localLot.highestBid = parseFloat(this.localLot.initialPrice); // Convert highestBid to a number
         this.localLot.active = true; // Set active to true
-        console.log("localLot to be added:", this.localLot);
 
         await LotsService.addLot(this.localLot);
         await this.fetchLots();
         this.displayMessage('success', "Lot ajouté avec succès");
         this.resetForm();
       } catch (error) {
-        console.error("Erreur lors de l'ajout du lot:", error);
         this.displayMessage('error', "Erreur lors de l'ajout du lot");
       }
     },

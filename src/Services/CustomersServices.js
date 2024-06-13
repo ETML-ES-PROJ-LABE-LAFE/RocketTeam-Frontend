@@ -8,8 +8,7 @@ class CustomersServices {
             const response = await axios.get(BASE_URL);
             return response.data;
         } catch (error) {
-            console.error('Error fetching customers:', error);
-            throw new Error('Failed to fetch customers');
+            throw new Error('Erreur lors du chargement des clients, veuillez essayer plus tard');
         }
     }
 

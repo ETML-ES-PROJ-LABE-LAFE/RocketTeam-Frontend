@@ -100,7 +100,7 @@ export default {
         const allCategories = await CategoryServices.getAllCategories();
         return allCategories.filter(category => category.parentCategory && category.parentCategory.id === parentCategoryId);
       } catch (error) {
-        console.error('Erreur lors de la récupération des sous-catégories :', error);
+        this.displayError('categoryError', "Erreur lors du chargement des lots, veuillez essayer plus tard");
         return [];
       }
     },

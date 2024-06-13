@@ -61,8 +61,9 @@ export default {
         const lotId = decodeId(props.encodedId);
         lot.value = await LotsService.getLotById(lotId);
       } catch (error) {
-        console.error("Error fetching lot details:", error);
-      } finally {
+          this.displayError('LotError', "Erreur lors du chargement des lots, veuillez essayer plus tard");
+        }
+         finally {
         loading.value = false;
       }
     });
