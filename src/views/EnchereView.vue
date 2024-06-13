@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import {ref, onMounted} from 'vue';
+import { ref, onMounted } from 'vue';
 import LotsService from '@/Services/LotsServices.js';
 import LotItem from '@/components/LotItem.vue';
 import ActionButtons from '@/components/ActionButtons.vue';
@@ -83,7 +83,10 @@ export default {
       try {
         const lotId = decodeId(props.encodedId);
         lot.value = await LotsService.getLotById(lotId);
-        await updateCustomerBalance();
+        if (selectedCustomer.value) {
+          selectedCustomer.value.originalBalance = selectedCustomer.value.balance;
+          await updateCustomerBalance();
+        }
       } catch (error) {
         console.error("Erreur lors du chargement des lots, veuillez essayer plus tard", error);
       } finally {
@@ -103,7 +106,7 @@ export default {
         const totalBidAmountResponse = await EnchereService.getTotalBidAmountByCustomer(selectedCustomer.value.id);
         const totalBidAmount = Number(totalBidAmountResponse);
 
-        const availableBalance = Number(selectedCustomer.value.balance) - totalBidAmount;
+        const availableBalance = Number(selectedCustomer.value.originalBalance) - totalBidAmount;
         console.log("Available Balance:", availableBalance);
         console.log("Bid Amount before submitting:", bidAmount.value);
 
@@ -111,8 +114,8 @@ export default {
           const enchere = {
             amount: Number(bidAmount.value),
             timestamp: new Date().toISOString(),
-            lot: {id: lot.value.id},
-            customer: {id: selectedCustomer.value.id}
+            lot: { id: lot.value.id },
+            customer: { id: selectedCustomer.value.id }
           };
           console.log("Enchere object before submitting:", enchere);
           await EnchereService.placeEnchere(enchere);

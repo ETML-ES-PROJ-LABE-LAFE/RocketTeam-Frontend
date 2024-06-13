@@ -9,7 +9,8 @@ class CustomersServices {
             return response.data.map(customer => ({
                 ...customer,
                 balance: Number(customer.balance),
-                reservedBalance: Number(customer.reservedBalance)
+                reservedBalance: Number(customer.reservedBalance),
+                originalBalance: Number(customer.balance) // Initialiser originalBalance
             }));
         } catch (error) {
             throw new Error('Erreur lors du chargement des clients, veuillez essayer plus tard');
@@ -21,6 +22,7 @@ class CustomersServices {
         if (customer) {
             customer.balance = Number(customer.balance);
             customer.reservedBalance = Number(customer.reservedBalance);
+            customer.originalBalance = Number(customer.originalBalance || customer.balance); // Initialiser originalBalance si nécessaire
         }
         return customer;
     }
