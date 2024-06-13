@@ -48,7 +48,6 @@ export default {
         throw new Error("Aucune catégorie disponible");
       }
     } catch (error) {
-      console.error("Error fetching categories:", error);
       this.displayError('categoryError', "Erreur lors du chargement des catégories, veuillez essayer plus tard");
     }
 
@@ -72,12 +71,10 @@ export default {
       try {
         const allLots = await LotsService.getLotsBySubcategory(this.selectedSubcategory);
         this.lots = allLots.filter(lot => lot.active); // Filtrer les lots actifs
-        console.log("Lots fetched:", this.lots); // Ajoutez cette ligne pour déboguer
         if (this.lots.length === 0) {
           this.displayError('lotsError', "Aucun lot trouvé pour cette sous-catégorie");
         }
       } catch (error) {
-        console.error("Error fetching lots by subcategory:", error);
         this.displayError('lotsError', "Erreur lors du chargement des lots, veuillez essayer plus tard");
       }
     }

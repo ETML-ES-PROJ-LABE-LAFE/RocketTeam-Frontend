@@ -14,7 +14,6 @@ class EnchereService {
             if (error.response && error.response.data && error.response.data.message) {
                 throw new Error(error.response.data.message);
             } else {
-                console.error('Error placing enchere:', error);
                 throw new Error('Failed to place enchere');
             }
         }
@@ -34,8 +33,7 @@ class EnchereService {
         try {
             await axios.get(`${BASE_URL}/release/${customerId}/${lotId}`);
         } catch (error) {
-            console.error('Failed to release reserved balance', error);
-            throw error;
+            throw new Error('Erreur vous empêchant de placer une enchère, veuillez réessayer plus tard');
         }
     }
 }

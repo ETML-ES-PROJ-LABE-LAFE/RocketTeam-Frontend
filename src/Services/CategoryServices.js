@@ -10,8 +10,7 @@ class CategoryServices {
             const response = await axios.get(BASE_URL);
             return response.data;
         } catch (error) {
-            console.error('Error fetching categories:', error);
-            throw new Error('Failed to fetch categories');
+            throw new Error('Erreur lors du chargement des catégories, veuillez essayer plus tard');
         }
     }
 

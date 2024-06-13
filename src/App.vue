@@ -6,6 +6,10 @@
         <router-link to="/about">About</router-link> |
         <router-link to="/lots">Lots</router-link> |
         <router-link v-if="selectedCustomer" to="/manage-lots">Gestion des Lots</router-link> |
+        <router-link v-if="selectedCustomer" to="/dashboard">Tableau de Bord</router-link> <!-- Nouveau lien -->
+      </div>
+      <div class="logo-container">
+        <img src="@/assets/auction_logo.png" alt="Logo" class="logo">
       </div>
       <div class="customer-info">
         <select v-model="selectedCustomerId" @change="customerChanged" class="customer-select">
@@ -96,18 +100,21 @@ html, body {
 }
 
 nav {
-  display: flex; /* Utilise flexbox pour une disposition flexible */
-  justify-content: space-between; /* Espacement entre les éléments */
-  align-items: center; /* Centrage vertical des éléments */
-  padding: 10px 20px; /* Espacement autour de la barre de navigation */
-  background-color: #000; /* Fond noir pour la bannière */
-  width: 100%; /* Assure que la nav occupe toute la largeur */
-  margin: 0; /* Supprime toute marge par défaut */
+  display: flex;
+  justify-content: center; /* Centre le contenu horizontalement */
+  align-items: center; /* Centre le contenu verticalement */
+  padding: 10px 20px;
+  background-color: #000;
+  width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+  position: relative;
 }
 
 .nav-container {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   width: 100%;
 }
 
@@ -116,37 +123,53 @@ nav {
   align-items: center;
 }
 
-nav a {
-  color: #fff; /* Texte blanc pour un contraste optimal avec le fond noir */
-  font-weight: bold; /* Texte en gras */
-  padding: 10px 20px; /* Padding autour du texte pour créer un effet de bouton */
-  margin-right: 20px; /* Margin Right pour laisser un espace sur la droite */
-  border-radius: 5px; /* Bords légèrement arrondis */
-  text-decoration: none; /* Supprime le soulignement des liens */
-  transition: background-color 0.3s, color 0.3s; /* Animation douce pour le survol */
+.logo-container {
+  position: absolute; /* Positionnement absolu pour centrer le logo */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%; /* S'assure que le conteneur prend toute la hauteur de la barre de navigation */
 }
 
-nav a:hover {
-  background-color: #3498db; /* Bleu clair pour le survol */
-  color: #fff; /* Texte reste blanc lors du survol */
+.logo-container img {
+  height: 50px; /* Ajuste la taille du logo */
+  width: auto; /* Maintient le ratio aspect pour éviter la déformation */
 }
 
 .customer-info {
   display: flex;
   align-items: center;
+  margin-right: 20px;
+}
+
+nav a {
+  color: #fff;
+  font-weight: bold;
+  padding: 10px 20px;
+  margin-right: 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+nav a:hover {
+  background-color: #3498db;
+  color: #fff;
 }
 
 .customer-select {
   padding: 8px 12px;
   border-radius: 5px;
-  width: 250px; /* Largeur augmentée pour meilleure lisibilité */
-  margin-left: 10px; /* Ajuste l'espace pour qu'il ne soit pas coupé */
+  width: 250px;
+  margin-left: 10px;
   border: 1px solid #ccc;
   background-color: white;
   color: black;
   font-size: 16px;
   outline: none;
-  transition: border-color 0.3s, box-shadow 0.3s; /* Animation douce pour focus */
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 .customer-select:focus {

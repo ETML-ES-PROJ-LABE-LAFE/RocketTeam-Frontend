@@ -12,8 +12,7 @@ class CustomersServices {
                 reservedBalance: Number(customer.reservedBalance)
             }));
         } catch (error) {
-            console.error('Failed to fetch customers', error);
-            throw error;
+            throw new Error('Erreur lors du chargement des clients, veuillez essayer plus tard');
         }
     }
 

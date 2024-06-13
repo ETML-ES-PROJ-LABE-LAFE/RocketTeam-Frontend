@@ -48,7 +48,7 @@ export default {
         const allCategories = await CategoryServices.getAllCategories();
         this.mainCategories = allCategories.filter(category => !category.parentCategory);
       } catch (error) {
-        console.error('Erreur lors de la récupération des catégories principales :', error);
+        this.displayError('categoryError', "Erreur lors du chargement des catégories principales, veuillez essayer plus tard");
       }
     },
     selectMainCategory(category) {
@@ -61,7 +61,7 @@ export default {
         const allCategories = await CategoryServices.getAllCategories();
         this.subcategories = allCategories.filter(category => category.parentCategory && category.parentCategory.id === parentCategoryId);
       } catch (error) {
-        console.error('Erreur lors de la récupération des sous-catégories :', error);
+        this.displayError('categoryError', "Erreur lors du chargement des catégories secondaires, veuillez essayer plus tard");
       }
     },
     handleMainCategoryChange() {

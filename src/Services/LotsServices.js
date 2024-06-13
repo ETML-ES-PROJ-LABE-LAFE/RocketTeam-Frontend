@@ -16,8 +16,7 @@ class LotsServices {
             const response = await axios.get(BASE_URL);
             return response.data;
         } catch (error) {
-            console.error('Error fetching lots:', error);
-            throw new Error('Failed to fetch lots');
+            throw new Error('Erreur, nous ne pouvons pas afficher tous les lots actuellement. Veuillez réessayer plus tard');
         }
     }
 
@@ -27,8 +26,7 @@ class LotsServices {
             const response = await axios.get(`${BASE_URL}/${encodedId}`);
             return response.data;
         } catch (error) {
-            console.error('Error fetching lot by ID:', error);
-            throw new Error('Failed to fetch lot by ID');
+            throw new Error('Erreur, nous ne pouvons par récuperer le lot. Veuillez réessayer plus tard');
         }
     }
 
@@ -37,8 +35,7 @@ class LotsServices {
             const response = await axios.get(`${BASE_URL}/categories/${subcategoryId}/lots`);
             return response.data;
         } catch (error) {
-            console.error('Error fetching lots by subcategory:', error);
-            throw new Error('Failed to fetch lots by subcategory');
+            throw new Error('Erreur, nous ne pouvons pas afficher les lots de cette sous-catégorie, veuillez réessayer plus tard ou avec une autre catégorie');
         }
     }
 
@@ -51,8 +48,7 @@ class LotsServices {
             });
             return response.data;
         } catch (error) {
-            console.error('Error adding lot:', error);
-            throw new Error('Failed to add lot');
+            throw new Error('Le lot n\'a pas pu être ajouté, veuillez essayer plus tard');
         }
     }
 
@@ -61,8 +57,7 @@ class LotsServices {
             const encodedId = this.encodeId(lotId);
             await axios.delete(`${BASE_URL}/${encodedId}`);
         } catch (error) {
-            console.error('Error deleting lot:', error);
-            throw new Error('Failed to delete lot');
+            throw new Error('Le lot n\'a pas pu être supprimé, veuillez essayer plus tard');
         }
     }
 
@@ -72,19 +67,28 @@ class LotsServices {
             const response = await axios.put(`${BASE_URL}/${encodedId}/endAuction`);
             return response.data;
         } catch (error) {
-            console.error('Error ending auction:', error);
-            throw new Error('Failed to end auction');
+            throw new Error('L\'enchère n\'a pas pu être terminé');
         }
     }
 
+    async setLotActive(lotId, active) {
+        try {
+            const encodedId = this.encodeId(lotId);
+            const response = await axios.put(`${BASE_URL}/${encodedId}/setActive`, null, {
+                params: { active }
+            });
+            return response.data;
+        } catch (error) {
+            throw new Error('Vous n\'avez pas pu modifier l\'état du lot, veuillez réessayer plus tard');
+        }
+    }
 
     async getLotsByCustomer(customer) {
         try {
             const response = await axios.get(`${BASE_URL}/customer/${customer.id}`);
             return response.data;
         } catch (error) {
-            console.error('Error fetching lots by customer:', error);
-            throw new Error('Failed to fetch lots by customer');
+            throw new Error('Nous n\'avons pas réussi à afficher vos lots, veuillez réessayer plus tard');
         }
     }
 }

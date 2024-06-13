@@ -83,7 +83,7 @@ export default {
         await LotsService.endAuction(lotId);
         this.$emit('end-auction', lotId);
       } catch (error) {
-        console.error('Error ending auction:', error);
+        this.displayError('auctionError', "Erreur lors de l'enchère, veuillez essayer plus tard");
         this.disabledButtons = this.disabledButtons.filter(id => id !== lotId);
       }
     }

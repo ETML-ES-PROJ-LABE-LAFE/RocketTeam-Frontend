@@ -5,7 +5,7 @@
       <div v-if="loading">Chargement en cours...</div>
       <div v-else>
         <div v-if="lot">
-          <LotItem :lot="lot" :showImage="true" />
+
           <ActionButtons
               :lot="lot"
               :selectedCustomer="selectedCustomer"
@@ -42,7 +42,7 @@
 <script>
 import { ref, onMounted } from 'vue';
 import LotsService from '@/Services/LotsServices.js';
-import LotItem from '@/components/LotItem.vue';
+/*import LotItem from '@/components/LotItem.vue';*/
 import ActionButtons from '@/components/ActionButtons.vue';
 import EnchereService from '@/Services/EnchereService.js';
 import CustomersServices from '@/Services/CustomersServices.js';
@@ -50,7 +50,7 @@ import CustomersServices from '@/Services/CustomersServices.js';
 export default {
   name: 'EnchereView',
   components: {
-    LotItem,
+    /*LotItem,*/
     ActionButtons
   },
   props: ['encodedId'],
@@ -85,8 +85,9 @@ export default {
         lot.value = await LotsService.getLotById(lotId);
         await updateCustomerBalance();
       } catch (error) {
-        console.error("Error fetching lot details:", error);
-      } finally {
+          this.displayError('LotError', "Erreur lors du chargement des lots, veuillez essayer plus tard");
+        }
+         finally {
         loading.value = false;
       }
     });
