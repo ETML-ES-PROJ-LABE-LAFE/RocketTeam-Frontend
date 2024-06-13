@@ -18,6 +18,7 @@
           <select id="lotStatus" v-model="filterStatus" @change="filterLots">
             <option value="active">Actifs</option>
             <option value="inactive">Inactifs</option>
+            <option value="pending">En attente de paiement</option> <!-- Nouvelle option -->
           </select>
         </div>
         <LotManagement
@@ -110,16 +111,24 @@ export default {
         if (!selectedCustomerObj) {
           throw new Error('Utilisateur non sélectionné ou invalide');
         }
-        this.lots = await LotsService.getLotsByCustomer(selectedCustomerObj);
+        const customerLots = await LotsService.getLotsByCustomer(selectedCustomerObj);
+        const pendingLots = await LotsService.getPendingLots();
+        this.lots = [...customerLots, ...pendingLots]; // Combine both lists
         this.filterLots();
       } catch (error) {
         this.displayMessage('error', "Erreur lors du chargement des lots");
       }
     },
     filterLots() {
-      this.filteredLots = this.lots.filter(lot =>
-          this.filterStatus === 'active' ? lot.active : !lot.active
-      );
+      this.filteredLots = this.lots.filter(lot => {
+        if (this.filterStatus === 'active') {
+          return lot.active;
+        } else if (this.filterStatus === 'inactive') {
+          return !lot.active;
+        } else if (this.filterStatus === 'pending') {
+          return !lot.active && lot.highestBidder != null; // Nouveau filtre
+        }
+      });
     },
     fetchSubcategories(mainCategoryId) {
       if (mainCategoryId) {
