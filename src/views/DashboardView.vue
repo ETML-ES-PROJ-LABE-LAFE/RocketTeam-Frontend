@@ -9,13 +9,11 @@
       </div>
       <div v-else>
         <h1>Tableau de Bord</h1>
-        <div class="lot-container">
-          <div class="lot-card" v-for="lot in lots" :key="lot.id">
-            <h2>{{ lot.title }}</h2>
-            <p>{{ lot.description }}</p>
-            <p><strong>État:</strong> {{ lot.status }}</p>
-            <button @click="handleAction(lot)">Action</button>
-          </div>
+        <div class="dashboard-grid">
+          <lots-bid :lots="categorizedLots['Lots Enchéris']" />
+          <lots-for-sale :lots="categorizedLots['Lots Mis en Vente']" />
+          <lots-sold :lots="categorizedLots['Lots Affectés']" />
+          <lots-unsold :lots="categorizedLots['Lots Invendus']" />
         </div>
       </div>
     </div>
@@ -26,22 +24,34 @@
 
 <script>
 import CustomersServices from "@/Services/CustomersServices.js";
+import DashboardService from "@/Services/DashboardService.js";
+import LotsBid from "@/components/LotsBid.vue";
+import LotsForSale from "@/components/LotsForSale.vue";
+import LotsSold from "@/components/LotsSold.vue";
+import LotsUnsold from "@/components/LotsUnsold.vue";
 
 export default {
   name: 'DashboardView',
+  components: {
+    LotsBid,
+    LotsForSale,
+    LotsSold,
+    LotsUnsold
+  },
   data() {
     return {
-      lots: [], // Ceci sera peuplé avec les données des lots plus tard
+      categorizedLots: {
+        "Lots Enchéris": [],
+        "Lots Mis en Vente": [],
+        "Lots Affectés": [],
+        "Lots Invendus": []
+      },
       selectedCustomer: null,
       error: null,
       success: null
     };
   },
   methods: {
-    handleAction(lot) {
-      // Logique pour gérer les actions basées sur l'état du lot
-      alert(`Action pour le lot: ${lot.title}`);
-    },
     displayMessage(type, message) {
       if (type === 'success') {
         this.success = message;
@@ -54,18 +64,23 @@ export default {
         this.success = null;
         this.error = null;
       }, 5000);
+    },
+    async fetchDashboardData() {
+      try {
+        const customerId = this.selectedCustomer.id;
+        this.categorizedLots["Lots Enchéris"] = await DashboardService.getLotsBid(customerId);
+        this.categorizedLots["Lots Mis en Vente"] = await DashboardService.getLotsForSale(customerId);
+        this.categorizedLots["Lots Affectés"] = await DashboardService.getLotsSold(customerId);
+        this.categorizedLots["Lots Invendus"] = await DashboardService.getLotsOwned(customerId).filter(lot => !lot.active && lot.highestBid === null);
+      } catch (error) {
+        this.displayMessage('error', "Erreur lors du chargement des lots.");
+      }
     }
   },
-  mounted() {
+  async mounted() {
     this.selectedCustomer = CustomersServices.getSelectedCustomer();
     if (this.selectedCustomer) {
-      // Simulation de données, tu remplaceras ceci par une requête API pour obtenir les données réelles
-      this.lots = [
-        { id: 1, title: 'Lot 1', description: 'Description du Lot 1', status: 'En cours d’enchère' },
-        { id: 2, title: 'Lot 2', description: 'Description du Lot 2', status: 'Proposé aux enchères' },
-        { id: 3, title: 'Lot 3', description: 'Description du Lot 3', status: 'Affecté comme preneur' },
-        { id: 4, title: 'Lot 4', description: 'Description du Lot 4', status: 'Invendu' }
-      ];
+      await this.fetchDashboardData();
     } else {
       this.displayMessage('error', "Vous devez être connecté pour accéder à cette page.");
     }
@@ -73,67 +88,36 @@ export default {
 };
 </script>
 
+
 <style scoped>
 .dashboard-background {
   width: 100%;
   padding: 20px 0;
-  background: linear-gradient(to bottom right, #3498db, #bdc3c7);
-  color: white;
+  background: #f0f4f8;
+  color: #333;
   min-height: 100vh;
 }
 
 .center-container {
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: #fff;
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   margin: auto;
   width: 90%;
-  max-width: 1100px;
+  max-width: 1200px;
 }
 
-h1, h2 {
-  color: black;
+h1 {
+  color: #333;
   text-align: center;
 }
 
-.lot-container {
-  display: flex;
-  flex-wrap: wrap;
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 20px;
-}
-
-.lot-card {
-  background: #fff;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  flex: 1 1 calc(33.333% - 40px); /* Trois cartes par ligne, avec espace entre elles */
-  box-sizing: border-box;
-}
-
-.lot-card h2 {
-  margin-top: 0;
-  color: #2c3e50;
-}
-
-.lot-card p {
-  color: #34495e;
-}
-
-.lot-card button {
-  background: #3498db;
-  color: #fff;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.lot-card button:hover {
-  background: #2980b9;
+  margin-top: 20px;
 }
 
 .error-popup,
