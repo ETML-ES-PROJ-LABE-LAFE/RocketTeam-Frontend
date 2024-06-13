@@ -11,14 +11,17 @@
       <div class="logo-container">
         <img src="@/assets/auction_logo.png" alt="Logo" class="logo">
       </div>
-      <div class="customer-info">
-        <select v-model="selectedCustomerId" @change="customerChanged" class="customer-select">
-          <option value="">Non connecté</option>
-          <option v-for="customer in customers" :key="customer.id" :value="customer.id">{{ customer.name }}</option>
-        </select>
-        <div v-if="selectedCustomer" class="balance-info">
-          <span>Solde: {{ selectedCustomer.balance - selectedCustomer.reservedBalance }}</span>
-          <button @click="addFunds">Ajouter des fonds</button>
+      <div class="customer-section">
+        <NotificationBell />
+        <div class="customer-info">
+          <select v-model="selectedCustomerId" @change="customerChanged" class="customer-select">
+            <option value="">Non connecté</option>
+            <option v-for="customer in customers" :key="customer.id" :value="customer.id">{{ customer.name }}</option>
+          </select>
+          <div v-if="selectedCustomer" class="balance-info">
+            <span>Solde: {{ selectedCustomer.balance - selectedCustomer.reservedBalance }}</span>
+            <button @click="addFunds">Ajouter des fonds</button>
+          </div>
         </div>
       </div>
     </div>
@@ -28,8 +31,12 @@
 
 <script>
 import CustomersServices from '@/Services/CustomersServices.js';
+import NotificationBell from '@/components/NotificationBell.vue';
 
 export default {
+  components: {
+    NotificationBell
+  },
   data() {
     return {
       customers: [],
@@ -136,6 +143,11 @@ nav {
 .logo-container img {
   height: 50px; /* Ajuste la taille du logo */
   width: auto; /* Maintient le ratio aspect pour éviter la déformation */
+}
+
+.customer-section {
+  display: flex;
+  align-items: center;
 }
 
 .customer-info {
