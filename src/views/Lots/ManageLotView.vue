@@ -15,10 +15,10 @@
         </div>
         <div v-if="mode === 'remove'" class="filter-group">
           <label for="lotStatus" style="color:black">Afficher les lots:</label>
-          <select id="lotStatus" v-model="filterStatus" @change="filterLots">
+          <select id="lotStatus" v-model="filterStatus" @change="fetchLots">
             <option value="active">Actifs</option>
             <option value="inactive">Inactifs</option>
-            <option value="pending">En attente de paiement</option> <!-- Nouvelle option -->
+            <option value="awaiting payment">En attente de paiement</option>
           </select>
         </div>
         <LotManagement
@@ -41,6 +41,7 @@
             :showEndAuctionButton="filterStatus === 'active'"
             @delete-lot="confirmDeleteLot"
             @end-auction="confirmEndAuction"
+            @refresh-lots="fetchLots"
         />
       </div>
     </div>
@@ -107,45 +108,33 @@ export default {
     },
     async fetchLots() {
       try {
-        const selectedCustomerObj = CustomersServices.getSelectedCustomer();
-        if (!selectedCustomerObj) {
+        if (!this.selectedCustomer) {
           throw new Error('Utilisateur non sélectionné ou invalide');
         }
-        const customerLots = await LotsService.getLotsByCustomer(selectedCustomerObj);
-        const pendingLots = await LotsService.getPendingLots();
-        this.lots = [...customerLots, ...pendingLots]; // Combine both lists
+        this.lots = await LotsService.getLotsByCustomerAndStatus(this.selectedCustomer.id, this.filterStatus);
         this.filterLots();
       } catch (error) {
         this.displayMessage('error', "Erreur lors du chargement des lots");
       }
     },
     filterLots() {
-      this.filteredLots = this.lots.filter(lot => {
-        if (this.filterStatus === 'active') {
-          return lot.active;
-        } else if (this.filterStatus === 'inactive') {
-          return !lot.active;
-        } else if (this.filterStatus === 'pending') {
-          return !lot.active && lot.highestBidder != null; // Nouveau filtre
-        }
-      });
+      this.filteredLots = this.lots.filter(lot => lot.status.toLowerCase() === this.filterStatus.toLowerCase());
     },
     fetchSubcategories(mainCategoryId) {
       if (mainCategoryId) {
-        this.subcategories = this.categories.filter(cat => cat.parentCategory && cat.parentCategory.id == mainCategoryId);
+        this.subcategories = this.categories.filter(cat => cat.parentCategory && cat.parentCategory.id === mainCategoryId);
       } else {
         this.subcategories = [];
       }
     },
     async handleSubmit() {
       try {
-        const selectedCustomerObj = CustomersServices.getSelectedCustomer();
-        if (!selectedCustomerObj) {
+        if (!this.selectedCustomer) {
           throw new Error('Utilisateur non sélectionné ou invalide');
         }
-        this.localLot.customer = {id: selectedCustomerObj.id};
+        this.localLot.customer = {id: this.selectedCustomer.id};
         this.localLot.highestBid = parseFloat(this.localLot.initialPrice); // Convert highestBid to a number
-        this.localLot.active = true; // Set active to true
+        this.localLot.status = 'active'; // Set status to active
 
         await LotsService.addLot(this.localLot);
         await this.fetchLots();

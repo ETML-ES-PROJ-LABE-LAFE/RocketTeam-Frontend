@@ -4,7 +4,7 @@
       <li v-for="lot in paginatedLots" :key="lot.id">
         <div @click="goToEnchere(lot.id)">
           <LotItem :lot="lot" :showDeleteButton="showDeleteButton" @delete-lot="$emit('delete-lot', lot.id)" />
-          <button v-if="showEndAuctionButton && lot.status === 'ACTIVE'" :disabled="disabledButtons.includes(lot.id)" @click.stop="endAuction(lot.id)">
+          <button v-if="showEndAuctionButton && lot.status === 'active'" :disabled="disabledButtons.includes(lot.id)" @click.stop="endAuction(lot.id)">
             Terminer les enchères
           </button>
         </div>
@@ -65,17 +65,12 @@ export default {
       }
     },
     async endAuction(lotId) {
-      if (confirm("Are you sure you want to end this auction?")) {
+      if (confirm("Êtes-vous sûr de vouloir terminer les enchères pour ce lot?")) {
         try {
-          this.disabledButtons.push(lotId);
           await LotsService.endAuction(lotId);
-          this.$emit('end-auction', lotId);
+          this.$emit('refresh-lots'); // Emit the refresh event after ending auction
         } catch (error) {
-          console.error("Failed to end auction:", error);
-          const index = this.disabledButtons.indexOf(lotId);
-          if (index > -1) {
-            this.disabledButtons.splice(index, 1); // Enable the button again if there's an error
-          }
+          console.error("Erreur lors de la fin des enchères:", error);
         }
       }
     },
