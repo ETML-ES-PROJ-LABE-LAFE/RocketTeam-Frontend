@@ -64,13 +64,15 @@ export default {
     async handleSubcategorySelected(selectedSubcategory) {
       this.selectedSubcategory = selectedSubcategory;
       await this.fetchSelectedSubcategoryLots();
-      this.$refs.lotsListRef.resetPagination(); // Reset pagination to the first page
+      if (this.$refs.lotsListRef) {
+        this.$refs.lotsListRef.resetPagination(); // Reset pagination to the first page
+      }
     },
 
     async fetchSelectedSubcategoryLots() {
       try {
         const allLots = await LotsService.getLotsBySubcategory(this.selectedSubcategory);
-        this.lots = allLots.filter(lot => lot.status === 'ACTIVE'); // Filtrer les lots actifs
+        this.lots = allLots.filter(lot => lot.status === 'active'); // Filtrer les lots actifs
         if (this.lots.length === 0) {
           this.displayError('lotsError', "Aucun lot trouvé pour cette sous-catégorie");
         }
