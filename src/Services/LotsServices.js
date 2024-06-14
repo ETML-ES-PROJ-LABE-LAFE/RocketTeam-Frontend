@@ -67,7 +67,7 @@ class LotsServices {
             const response = await axios.put(`${BASE_URL}/${encodedId}/endAuction`);
             return response.data;
         } catch (error) {
-            throw new Error('L\'enchère n\'a pas pu être terminé');
+            throw new Error("L'enchère n'a pas pu être terminée");
         }
     }
 
@@ -98,6 +98,15 @@ class LotsServices {
             return response.data;
         } catch (error) {
             throw new Error('Erreur lors du chargement des lots en attente de paiement');
+        }
+    }
+
+    async getLotsByCustomerAndStatus(customerId, status) {
+        try {
+            const response = await axios.get(`${BASE_URL}/customer/${customerId}/status/${status}`);
+            return response.data;
+        } catch (error) {
+            throw new Error('Erreur lors du chargement des lots par statut et utilisateur');
         }
     }
 }
