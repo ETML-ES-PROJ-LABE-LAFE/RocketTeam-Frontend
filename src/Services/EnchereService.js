@@ -7,7 +7,7 @@ class EnchereService {
         try {
             const response = await axios.post(BASE_URL, {
                 ...enchere,
-                amount: Number(enchere.amount) // Assurez-vous que 'amount' est un nombre
+                amount: Number(enchere.amount)
             });
             return response.data;
         } catch (error) {
