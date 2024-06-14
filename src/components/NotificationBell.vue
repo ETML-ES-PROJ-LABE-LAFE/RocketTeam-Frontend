@@ -9,7 +9,9 @@
         <img v-if="notification.user.avatarUrl" :src="notification.user.avatarUrl" alt="Avatar" class="avatar">
         <div class="notification-content">
           <p class="message">{{ notification.message }}</p>
+          <p class="amount">Montant de l'enchère: {{ notification.bidAmount }} €</p>
           <p class="timestamp">{{ timeAgo(notification.timestamp) }}</p>
+          <router-link :to="{ name: 'enchere', params: { encodedId: encodeId(notification.lot.id) } }">Voir le lot</router-link>
         </div>
       </div>
     </div>
@@ -43,6 +45,9 @@ export default {
     },
     timeAgo(timestamp) {
       return moment(timestamp).fromNow();
+    },
+    encodeId(id) {
+      return window.btoa(id.toString());
     }
   }
 };
@@ -110,6 +115,12 @@ export default {
 .message {
   margin: 0;
   font-weight: bold;
+}
+
+.amount {
+  margin: 0;
+  font-size: 0.9rem;
+  color: gray;
 }
 
 .timestamp {

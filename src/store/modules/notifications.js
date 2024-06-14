@@ -18,14 +18,6 @@ const actions = {
             console.error('Error fetching notifications:', error);
         }
     },
-    async addNotification({ commit }, notification) {
-        try {
-            const newNotification = await NotificationService.addNotification(notification);
-            commit('newNotification', newNotification);
-        } catch (error) {
-            console.error('Error adding notification:', error);
-        }
-    },
     async markAsRead({ commit }, id) {
         try {
             await NotificationService.markAsRead(id);
@@ -38,7 +30,6 @@ const actions = {
 
 const mutations = {
     setNotifications: (state, notifications) => (state.notifications = notifications),
-    newNotification: (state, notification) => state.notifications.unshift(notification),
     markRead: (state, id) => {
         const notification = state.notifications.find(n => n.id === id);
         if (notification) notification.read = true;

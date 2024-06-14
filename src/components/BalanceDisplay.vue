@@ -10,7 +10,7 @@ import { mapState } from 'vuex';
 export default {
   computed: {
     ...mapState({
-      balance: state => state.customer ? state.customer.balance : 0
+      balance: state => state.customer ? state.customer.balance - state.customer.reservedBalance : 0
     })
   }
 };
