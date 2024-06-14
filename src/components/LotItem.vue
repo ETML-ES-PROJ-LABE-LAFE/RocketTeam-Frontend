@@ -1,6 +1,6 @@
 <template>
   <div class="lot-item">
-    <img v-if="showImage && lot.image && lot.image !== ''" :src="require(`../assets/img_lot/${lot.image}`)" alt="Image du lot" class="lot-image"/>
+    <img v-if="showImage && lot.image && lot.image !== ''" :src="lot.image" alt="Image du lot" class="lot-image"/>
     <div class="lot-details">
       <div class="lot-attribute">
         <strong class="attribute-name">Numéro de lot:</strong>
