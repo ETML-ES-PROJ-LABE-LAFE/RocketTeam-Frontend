@@ -4,7 +4,7 @@
       <li v-for="lot in paginatedLots" :key="lot.id">
         <div @click="goToEnchere(lot.id)">
           <LotItem :lot="lot" :showDeleteButton="showDeleteButton" @delete-lot="$emit('delete-lot', lot.id)" />
-          <button v-if="showEndAuctionButton && lot.active" :disabled="disabledButtons.includes(lot.id)" @click.stop="endAuction(lot.id)">
+          <button v-if="showEndAuctionButton && lot.status === 'ACTIVE'" :disabled="disabledButtons.includes(lot.id)" @click.stop="endAuction(lot.id)">
             Terminer les enchères
           </button>
         </div>
@@ -61,7 +61,22 @@ export default {
     goToEnchere(lotId) {
       if (!this.showDeleteButton && !this.showEndAuctionButton) {
         const encodedId = LotsService.encodeId(lotId);
-        this.$router.push({ name: 'enchere', params: { encodedId } });
+        this.$router.push({name: 'enchere', params: {encodedId}});
+      }
+    },
+    async endAuction(lotId) {
+      if (confirm("Are you sure you want to end this auction?")) {
+        try {
+          this.disabledButtons.push(lotId);
+          await LotsService.endAuction(lotId);
+          this.$emit('end-auction', lotId);
+        } catch (error) {
+          console.error("Failed to end auction:", error);
+          const index = this.disabledButtons.indexOf(lotId);
+          if (index > -1) {
+            this.disabledButtons.splice(index, 1); // Enable the button again if there's an error
+          }
+        }
       }
     },
     nextPage() {
@@ -76,19 +91,9 @@ export default {
     },
     resetPagination() {
       this.currentPage = 1;
-    },
-    async endAuction(lotId) {
-      try {
-        this.disabledButtons.push(lotId);
-        await LotsService.endAuction(lotId);
-        this.$emit('end-auction', lotId);
-      } catch (error) {
-        this.displayError('auctionError', "Erreur lors de l'enchère, veuillez essayer plus tard");
-        this.disabledButtons = this.disabledButtons.filter(id => id !== lotId);
-      }
     }
   }
-};
+}
 </script>
 
 <style scoped>

@@ -22,6 +22,10 @@
         <strong class="attribute-name">Offre la plus élevée:</strong>
         <span class="attribute-value">{{ lot.highestBid }}</span>
       </div>
+      <div class="lot-attribute">
+        <strong class="attribute-name">Statut:</strong>
+        <span class="attribute-value">{{ lot.status }}</span>
+      </div>
       <button v-if="showDeleteButton" @click="$emit('delete-lot', lot.id)">Supprimer</button>
     </div>
   </div>
@@ -61,13 +65,12 @@ export default {
 }
 
 .lot-image {
-  width: 200px; /* Augmentation de la largeur de l'image */
-  height: 200px; /* Augmentation de la hauteur de l'image */
+  width: 200px;
+  height: 200px;
   object-fit: cover;
   border-radius: 10px;
   margin-right: 10px;
 }
-
 
 .lot-details {
   flex-grow: 1;

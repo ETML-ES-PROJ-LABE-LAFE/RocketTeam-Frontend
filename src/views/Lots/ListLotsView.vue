@@ -70,7 +70,7 @@ export default {
     async fetchSelectedSubcategoryLots() {
       try {
         const allLots = await LotsService.getLotsBySubcategory(this.selectedSubcategory);
-        this.lots = allLots.filter(lot => lot.active); // Filtrer les lots actifs
+        this.lots = allLots.filter(lot => lot.status === 'ACTIVE'); // Filtrer les lots actifs
         if (this.lots.length === 0) {
           this.displayError('lotsError', "Aucun lot trouvé pour cette sous-catégorie");
         }
