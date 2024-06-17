@@ -8,29 +8,15 @@ class NotificationService {
             const response = await axios.get(`${BASE_URL}/user/${userId}`);
             return response.data;
         } catch (error) {
-            throw new Error('Erreur, nous ne pouvons pas afficher les notifications actuellement. Veuillez réessayer plus tard');
+            throw new Error('Erreur lors du chargement des notifications');
         }
     }
 
-    async addNotification(notification) {
+    async markAsRead(id) {
         try {
-            const response = await axios.post(BASE_URL, JSON.stringify(notification), {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            return response.data;
+            await axios.put(`${BASE_URL}/${id}/read`);
         } catch (error) {
-            throw new Error('La notification n\'a pas pu être ajoutée, veuillez essayer plus tard');
-        }
-    }
-
-    async markAsRead(notificationId) {
-        try {
-            const response = await axios.put(`${BASE_URL}/${notificationId}/read`);
-            return response.data;
-        } catch (error) {
-            throw new Error('La notification n\'a pas pu être marquée comme lue, veuillez essayer plus tard');
+            throw new Error('Erreur lors de la mise à jour de la notification');
         }
     }
 }

@@ -6,7 +6,7 @@
         <router-link to="/about">About</router-link> |
         <router-link to="/lots">Lots</router-link> |
         <router-link v-if="selectedCustomer" to="/manage-lots">Gestion des Lots</router-link> |
-        <router-link v-if="selectedCustomer" to="/dashboard">Tableau de Bord</router-link> <!-- Nouveau lien -->
+        <router-link v-if="selectedCustomer" to="/dashboard">Tableau de Bord</router-link>
       </div>
       <div class="logo-container">
         <img src="@/assets/auction_logo.png" alt="Logo" class="logo">

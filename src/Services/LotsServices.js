@@ -30,9 +30,11 @@ class LotsServices {
         }
     }
 
-    async getLotsBySubcategory(subcategoryId) {
+    async getLotsBySubcategory(subcategoryId, excludeCustomerId = null) {
         try {
-            const response = await axios.get(`${BASE_URL}/categories/${subcategoryId}/lots`);
+            const response = await axios.get(`${BASE_URL}/categories/${subcategoryId}/lots`, {
+                params: excludeCustomerId ? { excludeCustomerId } : {}
+            });
             return response.data;
         } catch (error) {
             throw new Error('Erreur, nous ne pouvons pas afficher les lots de cette sous-catégorie, veuillez réessayer plus tard ou avec une autre catégorie');
