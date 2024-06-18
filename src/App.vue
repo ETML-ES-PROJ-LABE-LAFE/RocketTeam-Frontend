@@ -12,15 +12,15 @@
         <img src="@/assets/auction_logo.png" alt="Logo" class="logo">
       </div>
       <div class="customer-section">
+        <NotificationBell :userId="selectedCustomerId" />
         <div class="customer-info">
-          <button @click="addFunds">Ajouter des fonds</button>
           <select v-model="selectedCustomerId" @change="customerChanged" class="customer-select">
             <option value="">Non connecté</option>
             <option v-for="customer in customers" :key="customer.id" :value="customer.id">{{ customer.name }}</option>
           </select>
-          <NotificationBell :userId="selectedCustomerId" />
           <div v-if="selectedCustomer" class="balance-info">
             <span>Solde: {{ selectedCustomer.balance - selectedCustomer.reservedBalance }}</span>
+            <button @click="addFunds">Ajouter des fonds</button>
           </div>
         </div>
       </div>
@@ -207,7 +207,6 @@ button {
   color: white;
   cursor: pointer;
   transition: background-color 0.3s;
-  margin-right: 10px;
 }
 
 button:hover {

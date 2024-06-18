@@ -1,7 +1,7 @@
 <template>
   <div class="notification-bell">
     <button @click="toggleNotifications" class="bell-button">
-      <i class="fa fa-bell"></i>
+      <img :src="currentNotificationIcon" alt="Notification Bell" class="bell-icon">
       <span v-if="unreadCount" class="unread-count">{{ unreadCount }}</span>
     </button>
     <div v-if="showNotifications" class="notification-list">
@@ -20,18 +20,25 @@
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import moment from 'moment';
+import bellIcon from '@/assets/bell.png';
+import notificationIcon from '@/assets/notification.png';
 
 export default {
   props: ['userId'],
   data() {
     return {
-      showNotifications: false
+      showNotifications: false,
+      bellIcon: bellIcon,
+      notificationIcon: notificationIcon
     };
   },
   computed: {
     ...mapGetters(['allNotifications', 'unreadCount']),
     notifications() {
       return this.allNotifications;
+    },
+    currentNotificationIcon() {
+      return this.unreadCount > 0 ? this.notificationIcon : this.bellIcon;
     }
   },
   methods: {
@@ -96,6 +103,11 @@ export default {
   font-size: 1.5rem;
   color: #ffffff; /* Couleur de la cloche */
   position: relative;
+}
+
+.bell-icon {
+  width: 30px; /* Ajustez la taille de l'icône selon vos besoins */
+  height: auto;
 }
 
 .unread-count {
