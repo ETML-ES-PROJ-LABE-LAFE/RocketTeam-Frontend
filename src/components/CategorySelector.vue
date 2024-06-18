@@ -106,26 +106,26 @@ export default {
 
 select {
   margin-top: 10px;
-  width: auto; /* Augmenter la largeur pour éviter la troncation */
-  padding: 10px 20px; /* Assure un padding similaire aux boutons pour uniformité */
-  border-radius: 15px; /* Bords arrondis comme les boutons */
-  border: 1px solid #ccc; /* Bordure similaire à celle des boutons */
-  background-color: white; /* Fond blanc */
-  cursor: pointer; /* Indique que c'est un élément interactif */
-  outline: none; /* Supprime l'outline par défaut lors de la sélection */
-  transition: background-color 0.3s, border-color 0.3s; /* Transition douce pour les interactions */
+  width: auto;
+  padding: 10px 20px;
+  border-radius: 15px;
+  border: 1px solid #ccc;
+  background-color: white;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.3s, border-color 0.3s;
 }
 
 select option {
-  font-size: 16px; /* Ajuste la taille de la police si nécessaire */
+  font-size: 16px;
 }
 
 select:hover {
-  background-color: #ecf0f1; /* Légère modification de couleur au survol pour un feedback visuel */
-  border-color: #bdc3c7; /* Changement de la couleur de bordure au survol */
+  background-color: #ecf0f1;
+  border-color: #bdc3c7;
 }
 
 select:focus {
-  border-color: #3498db; /* Bordure bleue lors de la focus pour indiquer l'élément actif */
+  border-color: #3498db;
 }
 </style>

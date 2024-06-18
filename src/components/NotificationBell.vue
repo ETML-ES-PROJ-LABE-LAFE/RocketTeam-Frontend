@@ -8,7 +8,7 @@
       <div v-for="notification in notifications" :key="notification.id" class="notification-item" @click="handleNotificationClick(notification)">
         <div class="notification-content">
           <p class="message">{{ getNotificationMessage(notification) }}</p>
-          <p v-if="notification.message.includes('a trouvé un acheteur') || notification.message.includes('Vous avez remporté l\'enchère')" class="amount">Montant de l'enchère la plus haute: {{ notification.bidAmount }} €</p>
+          <p v-if="notification.message.includes('a trouvé un acheteur')" class="amount">Montant de l'enchère la plus haute: {{ notification.bidAmount }} €</p>
           <p class="timestamp">{{ timeAgo(notification.timestamp) }}</p>
           <button v-if="notification.message.includes('Vous avez remporté l\'enchère')" @click.stop="redirectToDashboard(notification.id)" class="pay-button">Payer</button>
         </div>
@@ -45,18 +45,23 @@ export default {
     timeAgo(timestamp) {
       return moment(timestamp).fromNow();
     },
-    handleNotificationClick(notification) {
-      this.markNotificationAsRead(notification.id);
-      this.deleteNotification(notification.id);
+    async handleNotificationClick(notification) {
+      await this.markNotificationAsRead(notification.id);
+      await this.deleteNotification(notification.id);
+      // Mettre à jour les notifications locales pour qu'elles disparaissent de l'affichage
+      const index = this.notifications.findIndex(n => n.id === notification.id);
+      if (index !== -1) {
+        this.notifications.splice(index, 1);
+      }
     },
-    markNotificationAsRead(id) {
-      this.markAsRead(id);
-      this.deleteNotification(id);
+    async markNotificationAsRead(id) {
+      await this.markAsRead(id);
     },
-    redirectToDashboard(id) {
-      this.markNotificationAsRead(id);
+    async redirectToDashboard(id) {
+      await this.markNotificationAsRead(id);
+      await this.deleteNotification(id);
       this.showNotifications = false;
-      this.$router.push({ name: 'dashboard' });
+      this.$router.push({name: 'dashboard'});
     },
     getNotificationMessage(notification) {
       if (notification.message.includes("n'a pas trouvé d'acheteur")) {
@@ -65,8 +70,6 @@ export default {
         return `Votre lot ${notification.lot.description} a trouvé un acheteur.`;
       } else if (notification.message.includes('a été vendu')) {
         return `Votre lot ${notification.lot.description} a été vendu.`;
-      } else if (notification.message.includes("Vous avez remporté l'enchère")) {
-        return `Félicitations ! Vous avez remporté l'enchère pour le lot: ${notification.lot.description}.`;
       } else {
         return notification.message;
       }
