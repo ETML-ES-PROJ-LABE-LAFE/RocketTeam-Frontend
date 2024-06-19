@@ -1,3 +1,4 @@
+// src/Services/DashboardService.js
 import axios from 'axios';
 
 const BASE_URL = "http://localhost:8080/dashboard";
@@ -20,6 +21,16 @@ class DashboardService {
 
     async getLotsOwned(customerId) {
         const response = await axios.get(`${BASE_URL}/lotsOwned/${customerId}`);
+        return response.data;
+    }
+
+    async getLotsAffected(customerId){
+        const response = await axios.get(`${BASE_URL}/lotsAffected/${customerId}`);
+        return response.data;
+    }
+
+    async getLotsVendues(customerId) {
+        const response = await axios.get(`${BASE_URL}/lotsVendues/${customerId}`);
         return response.data;
     }
 }

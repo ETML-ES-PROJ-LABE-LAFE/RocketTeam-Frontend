@@ -36,7 +36,7 @@ export default {
     LotsBid,
     LotsForSale,
     LotsSold,
-    LotsUnsold
+    LotsUnsold,
   },
   data() {
     return {
@@ -70,8 +70,8 @@ export default {
         const customerId = this.selectedCustomer.id;
         this.categorizedLots["Lots Enchéris"] = await DashboardService.getLotsBid(customerId);
         this.categorizedLots["Lots Mis en Vente"] = await DashboardService.getLotsForSale(customerId);
-        this.categorizedLots["Lots Affectés"] = await DashboardService.getLotsSold(customerId);
-        this.categorizedLots["Lots Invendus"] = await DashboardService.getLotsOwned(customerId).filter(lot => !lot.active && lot.highestBid === null);
+        this.categorizedLots["Lots Affectés"] = await DashboardService.getLotsAffected(customerId);
+        this.categorizedLots["Lots Invendus"] = (await DashboardService.getLotsOwned(customerId)).filter(lot => !lot.active && !lot.highestBid);
       } catch (error) {
         this.displayMessage('error', "Erreur lors du chargement des lots.");
       }
@@ -87,7 +87,6 @@ export default {
   }
 };
 </script>
-
 
 <style scoped>
 .dashboard-background {
@@ -115,9 +114,19 @@ h1 {
 
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(5, 1fr);
   gap: 20px;
   margin-top: 20px;
+}
+
+.dashboard-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.dashboard-column h2 {
+  text-align: center;
 }
 
 .error-popup,
