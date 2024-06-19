@@ -25,6 +25,14 @@ const actions = {
         } catch (error) {
             console.error('Error marking notification as read:', error);
         }
+    },
+    async deleteNotification({ commit }, id) {
+        try {
+            await NotificationService.deleteNotification(id);
+            commit('deleteNotification', id);
+        } catch (error) {
+            console.error('Error deleting notification:', error);
+        }
     }
 };
 
@@ -33,6 +41,9 @@ const mutations = {
     markRead: (state, id) => {
         const notification = state.notifications.find(n => n.id === id);
         if (notification) notification.read = true;
+    },
+    deleteNotification: (state, id) => {
+        state.notifications = state.notifications.filter(n => n.id !== id);
     }
 };
 

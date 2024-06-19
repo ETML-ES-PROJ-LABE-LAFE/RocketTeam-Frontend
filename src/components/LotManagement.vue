@@ -194,7 +194,7 @@ form > div {
 form label {
   display: block;
   margin-bottom: 5px;
-  color: black; /* Changer la couleur du texte à noir */
+  color: black;
 }
 
 textarea, select, input {
@@ -204,7 +204,7 @@ textarea, select, input {
   border-radius: 5px;
   border: 1px solid #ccc;
   box-sizing: border-box;
-  color: black; /* Changer la couleur du texte à noir */
+  color: black;
 }
 
 h2 {

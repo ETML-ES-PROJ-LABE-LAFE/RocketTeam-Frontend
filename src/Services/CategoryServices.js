@@ -13,8 +13,6 @@ class CategoryServices {
             throw new Error('Erreur lors du chargement des catégories, veuillez essayer plus tard');
         }
     }
-
-    // Autres méthodes pour ajouter, mettre à jour et supprimer des catégories peuvent être ajoutées ici
 }
 
 export default new CategoryServices();

@@ -71,7 +71,8 @@ export default {
 
     async fetchSelectedSubcategoryLots() {
       try {
-        const allLots = await LotsService.getLotsBySubcategory(this.selectedSubcategory);
+        const excludeCustomerId = this.selectedCustomer ? this.selectedCustomer.id : null;
+        const allLots = await LotsService.getLotsBySubcategory(this.selectedSubcategory, excludeCustomerId);
         this.lots = allLots.filter(lot => lot.status === 'active'); // Filtrer les lots actifs
         if (this.lots.length === 0) {
           this.displayError('lotsError', "Aucun lot trouvé pour cette sous-catégorie");
@@ -80,7 +81,6 @@ export default {
         this.displayError('lotsError', "Erreur lors du chargement des lots, veuillez essayer plus tard");
       }
     }
-
   }
 };
 </script>

@@ -6,7 +6,7 @@
         <router-link to="/about">About</router-link> |
         <router-link to="/lots">Lots</router-link> |
         <router-link v-if="selectedCustomer" to="/manage-lots">Gestion des Lots</router-link> |
-        <router-link v-if="selectedCustomer" to="/dashboard">Tableau de Bord</router-link> <!-- Nouveau lien -->
+        <router-link v-if="selectedCustomer" to="/dashboard">Tableau de Bord</router-link>
       </div>
       <div class="logo-container">
         <img src="@/assets/auction_logo.png" alt="Logo" class="logo">
@@ -69,14 +69,14 @@ export default {
   },
   methods: {
     customerChanged() {
-      this.$router.go(); // Reload the page by programmatically refreshing the router
+      this.$router.go();
     },
     async addFunds() {
       const amount = parseFloat(prompt("Entrez le montant à ajouter:"));
       if (!isNaN(amount) && amount > 0) {
         this.selectedCustomer.balance += amount;
         await CustomersServices.updateCustomerBalance(this.selectedCustomer);
-        this.$router.go(); // Refresh the router to update the balance
+        this.$router.go();
       } else {
         alert("Veuillez entrer un montant valide.");
       }
@@ -86,15 +86,14 @@ export default {
 </script>
 
 <style>
-/* Réinitialisation pour le body et html pour enlever les marges par défaut */
 html, body {
   margin: 0;
   padding: 0;
-  height: 100%; /* S'assure que le html et body prennent toute la hauteur */
-  width: 100%; /* S'assure que le html et body prennent toute la largeur */
-  overflow-x: hidden; /* Prévient le débordement horizontal */
-  background: linear-gradient(to bottom right, #3498db, #bdc3c7); /* Ajout du fond global */
-  color: white; /* Texte en blanc par défaut */
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  background: linear-gradient(to bottom right, #3498db, #bdc3c7);
+  color: white;
 }
 
 #app {
@@ -108,8 +107,8 @@ html, body {
 
 nav {
   display: flex;
-  justify-content: center; /* Centre le contenu horizontalement */
-  align-items: center; /* Centre le contenu verticalement */
+  justify-content: center;
+  align-items: center;
   padding: 10px 20px;
   background-color: #000;
   width: 100%;
@@ -131,18 +130,18 @@ nav {
 }
 
 .logo-container {
-  position: absolute; /* Positionnement absolu pour centrer le logo */
+  position: absolute;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%; /* S'assure que le conteneur prend toute la hauteur de la barre de navigation */
+  height: 100%;
 }
 
 .logo-container img {
-  height: 50px; /* Ajuste la taille du logo */
-  width: auto; /* Maintient le ratio aspect pour éviter la déformation */
+  height: 50px;
+  width: auto;
 }
 
 .customer-section {
@@ -185,8 +184,8 @@ nav a:hover {
 }
 
 .customer-select:focus {
-  border-color: #3498db; /* Couleur de la bordure au focus */
-  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5); /* Ombre portée au focus */
+  border-color: #3498db;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
 }
 
 .balance-info {

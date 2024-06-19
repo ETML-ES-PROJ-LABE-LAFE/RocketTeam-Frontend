@@ -97,7 +97,7 @@ export default {
   border-bottom: 1px solid #ccc;
   list-style-type: none;
   cursor: pointer;
-  color: black; /* Changed to black */
+  color: black;
 }
 
 .lots-list {
@@ -126,7 +126,7 @@ button:disabled {
 }
 
 .pagination-text {
-  color: black; /* Changed to black */
-  margin: 0 10px; /* Ajout d'un espacement pour le texte */
+  color: black;
+  margin: 0 10px;
 }
 </style>
