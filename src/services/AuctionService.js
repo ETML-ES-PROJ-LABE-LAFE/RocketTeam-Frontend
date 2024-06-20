@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const BASE_URL = "http://localhost:8080/encheres";
 
-class EnchereService {
+class AuctionService {
     async placeEnchere(enchere) {
         try {
             const response = await axios.post(BASE_URL, {
@@ -24,8 +24,7 @@ class EnchereService {
             const response = await axios.get(`${BASE_URL}/total/${customerId}`);
             return response.data;
         } catch (error) {
-            console.error('Failed to fetch total bid amount', error);
-            throw error;
+            throw new Error('Failed to fetch total bid amount');
         }
     }
 
@@ -38,4 +37,4 @@ class EnchereService {
     }
 }
 
-export default new EnchereService();
+export default new AuctionService();

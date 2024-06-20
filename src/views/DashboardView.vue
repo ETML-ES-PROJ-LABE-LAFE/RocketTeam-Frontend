@@ -23,8 +23,8 @@
   </div>
 </template>
 <script>
-import CustomersServices from "@/Services/CustomersServices.js";
-import DashboardService from "@/Services/DashboardService.js";
+import CustomersServices from "@/services/CustomersServices.js";
+import DashboardService from "@/services/DashboardService.js";
 import LotsBid from "@/components/LotsBid.vue";
 import LotsForSale from "@/components/LotsForSale.vue";
 import LotsAffected from "@/components/LotsAffected.vue";
@@ -75,7 +75,7 @@ export default {
         this.categorizedLots["Lots Mis en Vente"] = await DashboardService.getLotsForSale(customerId);
         this.categorizedLots["Lots Affectés"] = await DashboardService.getLotsAffected(customerId);
         this.categorizedLots["Lots Invendus"] = (await DashboardService.getLotsOwned(customerId)).filter(lot => lot.status === 'inactive');
-        this.categorizedLots["Lots Vendus"] = await DashboardService.getLotsVendues(customerId);
+        this.categorizedLots["Lots Vendus"] = await DashboardService.getLotsSold(customerId);
       } catch (error) {
         this.displayMessage('error', "Erreur lors du chargement des lots.");
       }

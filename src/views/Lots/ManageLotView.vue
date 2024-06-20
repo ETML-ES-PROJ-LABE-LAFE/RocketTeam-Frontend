@@ -53,9 +53,9 @@
 <script>
 import LotsList from "@/components/LotsList.vue";
 import LotManagement from "@/components/LotManagement.vue";
-import LotsService from "@/Services/LotsServices.js";
-import CategoryService from "@/Services/CategoryServices.js";
-import CustomersServices from "@/Services/CustomersServices.js";
+import LotsService from "@/services/LotsServices.js";
+import CategoryService from "@/services/CategoryServices.js";
+import CustomersServices from "@/services/CustomersServices.js";
 
 export default {
   components: {

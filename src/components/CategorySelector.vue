@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import CategoryServices from '@/Services/CategoryServices.js';
+import CategoryServices from '@/services/CategoryServices.js';
 
 export default {
   props: {

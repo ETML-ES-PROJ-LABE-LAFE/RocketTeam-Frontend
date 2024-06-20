@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import LotsServices from "@/Services/LotsServices";
+import LotsServices from "@/services/LotsServices";
 
 export default {
   name: 'HomeView',

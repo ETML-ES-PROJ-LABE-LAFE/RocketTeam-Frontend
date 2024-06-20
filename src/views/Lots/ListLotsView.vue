@@ -17,11 +17,11 @@
 </template>
 
 <script>
-import LotsService from "@/Services/LotsServices.js";
+import LotsService from "@/services/LotsServices.js";
 import CategorySelector from "@/components/CategorySelector.vue";
 import LotsList from "@/components/LotsList.vue";
-import CategoryService from "@/Services/CategoryServices.js";
-import CustomersServices from "@/Services/CustomersServices.js";
+import CategoryService from "@/services/CategoryServices.js";
+import CustomersServices from "@/services/CustomersServices.js";
 
 export default {
   name: 'ListLotsView',

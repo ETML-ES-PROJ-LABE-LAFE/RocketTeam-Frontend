@@ -30,8 +30,9 @@
 </template>
 
 <script>
-import CustomersServices from '@/Services/CustomersServices.js';
+import CustomersServices from '@/services/CustomersServices.js';
 import NotificationBell from '@/components/NotificationBell.vue';
+import { mapState, mapActions } from 'vuex';
 
 export default {
   components: {
@@ -40,7 +41,6 @@ export default {
   data() {
     return {
       customers: [],
-      selectedCustomer: null,
       selectedCustomerId: null
     };
   },
@@ -49,25 +49,31 @@ export default {
       this.customers = await CustomersServices.getAllCustomers();
       const selectedCustomer = CustomersServices.getSelectedCustomer();
       if (selectedCustomer) {
-        this.selectedCustomer = selectedCustomer;
+        this.setSelectedCustomer(selectedCustomer);
         this.selectedCustomerId = selectedCustomer.id;
       }
     } catch (error) {
       console.error('Error fetching customers:', error);
     }
   },
+  computed: {
+    ...mapState({
+      selectedCustomer: state => state.customers.customer
+    })
+  },
   watch: {
     selectedCustomerId(newId) {
       if (newId) {
-        this.selectedCustomer = this.customers.find(customer => customer.id === Number(newId));
-        CustomersServices.setSelectedCustomer(this.selectedCustomer);
+        const customer = this.customers.find(customer => customer.id === Number(newId));
+        this.setSelectedCustomer(customer);
       } else {
-        this.selectedCustomer = null;
-        CustomersServices.setSelectedCustomer(null);
+        this.clearSelectedCustomer();
+        this.$router.push({ name: 'home' });
       }
     }
   },
   methods: {
+    ...mapActions(['setSelectedCustomer', 'clearSelectedCustomer']),
     customerChanged() {
       this.$router.go();
     },

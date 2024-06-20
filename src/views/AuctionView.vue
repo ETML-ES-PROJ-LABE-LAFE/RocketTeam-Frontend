@@ -41,11 +41,11 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import LotsService from '@/Services/LotsServices.js';
+import LotsService from '@/services/LotsServices.js';
 import LotItem from '@/components/LotItem.vue';
 import ActionButtons from '@/components/ActionButtons.vue';
-import EnchereService from '@/Services/EnchereService.js';
-import CustomersServices from '@/Services/CustomersServices.js';
+import EnchereService from '@/services/AuctionService.js';
+import CustomersServices from '@/services/CustomersServices.js';
 
 export default {
   name: 'EnchereView',

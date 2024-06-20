@@ -20,7 +20,7 @@
 
 <script>
 import LotItem from './LotItem.vue';
-import LotsService from "@/Services/LotsServices.js";
+import LotsService from "@/services/LotsServices.js";
 
 export default {
   components: {

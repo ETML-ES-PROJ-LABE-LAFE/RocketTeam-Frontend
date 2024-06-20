@@ -34,8 +34,7 @@ class CustomersServices {
         try {
             await axios.put(`${BASE_URL}/${customer.id}`, customer);
         } catch (error) {
-            console.error('Failed to update customer balance', error);
-            throw error;
+            throw new Error('Failed to update customer balance');
         }
     }
 }

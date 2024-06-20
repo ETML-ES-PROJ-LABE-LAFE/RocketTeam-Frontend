@@ -2,7 +2,7 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import AboutView from "@/views/AboutView.vue";
 import ListLotsView from '../views/Lots/ListLotsView.vue';
-import EnchereView from '../views/EnchereView.vue';
+import EnchereView from '../views/AuctionView.vue';
 import ManageLotView from '../views/Lots/ManageLotView.vue';
 import DashboardView from '../views/DashboardView.vue';
 

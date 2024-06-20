@@ -1,6 +1,4 @@
-// store/modules/customers.js
-
-import CustomersServices from '@/Services/CustomersServices.js';
+import CustomersServices from '@/services/CustomersServices.js';
 
 const state = {
     customer: null,
@@ -26,6 +24,9 @@ const mutations = {
             state.customer.reservedBalance = reservedBalance;
         }
     },
+    clearCustomer(state) {
+        state.customer = null;
+    },
 };
 
 const actions = {
@@ -37,7 +38,12 @@ const actions = {
         commit('updateBalance', balance);
     },
     setSelectedCustomer({ commit }, customer) {
+        CustomersServices.setSelectedCustomer(customer);
         commit('setCustomer', customer);
+    },
+    clearSelectedCustomer({ commit }) {
+        CustomersServices.setSelectedCustomer(null);
+        commit('clearCustomer');
     },
 };
 

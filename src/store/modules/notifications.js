@@ -1,4 +1,4 @@
-import NotificationService from '@/Services/NotificationService.js';
+import NotificationService from '@/services/NotificationService.js';
 
 const state = {
     notifications: []
