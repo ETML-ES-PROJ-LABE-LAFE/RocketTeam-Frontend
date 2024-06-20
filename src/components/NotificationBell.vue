@@ -100,12 +100,12 @@ export default {
   border: none;
   cursor: pointer;
   font-size: 1.5rem;
-  color: #ffffff; /* Couleur de la cloche */
+  color: #ffffff;
   position: relative;
 }
 
 .bell-icon {
-  width: 30px; /* Ajustez la taille de l'icône selon vos besoins */
+  width: 30px;
   height: auto;
 }
 
@@ -124,8 +124,8 @@ export default {
   position: absolute;
   top: 100%;
   right: 0;
-  background-color: #ffffff; /* Couleur de fond des notifications */
-  color: #333333; /* Couleur du texte des notifications */
+  background-color: #ffffff;
+  color: #333333;
   border-radius: 5px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: 350px;
@@ -139,7 +139,7 @@ export default {
 .notification-item {
   padding: 10px;
   border-bottom: 1px solid #ddd;
-  cursor: pointer; /* Ajout du curseur pointer pour indiquer que la notification est cliquable */
+  cursor: pointer;
 }
 
 .notification-item:last-child {
@@ -149,27 +149,27 @@ export default {
 .notification-content {
   display: flex;
   flex-direction: column;
-  align-items: center; /* Centrer le contenu horizontalement */
+  align-items: center;
 }
 
 .message {
   margin: 0;
   font-weight: bold;
-  color: #333333; /* Couleur du message */
-  text-align: center; /* Centrer le texte */
+  color: #333333;
+  text-align: center;
 }
 
 .amount {
   margin: 0;
   font-size: 0.9rem;
-  color: #555555; /* Couleur du montant */
+  color: #555555;
 }
 
 .timestamp {
   margin: 0;
   font-size: 0.8rem;
-  color: #777777; /* Couleur de l'horodatage */
-  text-align: center; /* Centrer le texte */
+  color: #777777;
+  text-align: center;
 }
 
 .pay-button {
@@ -177,7 +177,7 @@ export default {
   padding: 8px 12px;
   border-radius: 5px;
   border: none;
-  background-color: #3498db; /* Couleur du bouton payer */
+  background-color: #3498db;
   color: white;
   cursor: pointer;
   transition: background-color 0.3s;

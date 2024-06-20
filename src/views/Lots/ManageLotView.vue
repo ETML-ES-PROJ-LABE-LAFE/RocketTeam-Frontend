@@ -133,8 +133,8 @@ export default {
           throw new Error('Utilisateur non sélectionné ou invalide');
         }
         this.localLot.customer = {id: this.selectedCustomer.id};
-        this.localLot.highestBid = parseFloat(this.localLot.initialPrice); // Convert highestBid to a number
-        this.localLot.status = 'active'; // Set status to active
+        this.localLot.highestBid = parseFloat(this.localLot.initialPrice);
+        this.localLot.status = 'active';
 
         await LotsService.addLot(this.localLot);
         await this.fetchLots();
@@ -289,7 +289,7 @@ export default {
 }
 
 h2 {
-  color: black; /* Changed to black */
+  color: black;
   text-align: center;
   margin-bottom: 10px;
 }

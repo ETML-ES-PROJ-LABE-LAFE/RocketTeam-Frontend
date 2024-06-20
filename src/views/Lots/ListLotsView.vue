@@ -65,7 +65,7 @@ export default {
       this.selectedSubcategory = selectedSubcategory;
       await this.fetchSelectedSubcategoryLots();
       if (this.$refs.lotsListRef) {
-        this.$refs.lotsListRef.resetPagination(); // Reset pagination to the first page
+        this.$refs.lotsListRef.resetPagination();
       }
     },
 
@@ -73,7 +73,7 @@ export default {
       try {
         const excludeCustomerId = this.selectedCustomer ? this.selectedCustomer.id : null;
         const allLots = await LotsService.getLotsBySubcategory(this.selectedSubcategory, excludeCustomerId);
-        this.lots = allLots.filter(lot => lot.status === 'active'); // Filtrer les lots actifs
+        this.lots = allLots.filter(lot => lot.status === 'active');
         if (this.lots.length === 0) {
           this.displayError('lotsError', "Aucun lot trouvé pour cette sous-catégorie");
         }
@@ -134,7 +134,7 @@ h2 {
 
 .centered-text {
   text-align: center;
-  color: black; /* Changed to black */
+  color: black;
   margin: 0 auto 10px;
 }
 

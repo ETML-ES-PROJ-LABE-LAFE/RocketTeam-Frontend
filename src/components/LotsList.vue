@@ -70,7 +70,7 @@ export default {
           await LotsService.endAuction(lotId);
           this.$emit('refresh-lots'); // Emit the refresh event after ending auction
         } catch (error) {
-          console.error("Erreur lors de la fin des enchères:", error);
+          console.error("Erreur lors de la fin des enchères :", error);
         }
       }
     },
