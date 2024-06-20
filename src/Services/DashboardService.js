@@ -24,13 +24,20 @@ class DashboardService {
         return response.data;
     }
 
-    async getLotsAffected(customerId){
+    async getLotsAffected(customerId) {
         const response = await axios.get(`${BASE_URL}/lotsAffected/${customerId}`);
         return response.data;
     }
 
     async getLotsVendues(customerId) {
         const response = await axios.get(`${BASE_URL}/lotsVendues/${customerId}`);
+        return response.data;
+    }
+
+    async confirmPayment(lotId, userId) {
+        const response = await axios.put(`${BASE_URL}/${lotId}/confirmPayment`, null, {
+            params: { userId }
+        });
         return response.data;
     }
 }

@@ -12,8 +12,9 @@
         <div class="dashboard-grid">
           <lots-bid :lots="categorizedLots['Lots Enchéris']" />
           <lots-for-sale :lots="categorizedLots['Lots Mis en Vente']" />
-          <lots-sold :lots="categorizedLots['Lots Affectés']" />
+          <lots-affected :lots="categorizedLots['Lots Affectés']" @confirm-payment="confirmPayment" />
           <lots-unsold :lots="categorizedLots['Lots Invendus']" />
+          <lots-sold :lots="categorizedLots['Lots Vendus']" />
         </div>
       </div>
     </div>
@@ -21,22 +22,23 @@
     <div v-if="success" class="success-popup">{{ success }}</div>
   </div>
 </template>
-
 <script>
 import CustomersServices from "@/Services/CustomersServices.js";
 import DashboardService from "@/Services/DashboardService.js";
 import LotsBid from "@/components/LotsBid.vue";
 import LotsForSale from "@/components/LotsForSale.vue";
-import LotsSold from "@/components/LotsSold.vue";
+import LotsAffected from "@/components/LotsAffected.vue";
 import LotsUnsold from "@/components/LotsUnsold.vue";
+import LotsSold from "@/components/LotsSold.vue";
 
 export default {
   name: 'DashboardView',
   components: {
     LotsBid,
     LotsForSale,
-    LotsSold,
+    LotsAffected,
     LotsUnsold,
+    LotsSold,
   },
   data() {
     return {
@@ -44,7 +46,8 @@ export default {
         "Lots Enchéris": [],
         "Lots Mis en Vente": [],
         "Lots Affectés": [],
-        "Lots Invendus": []
+        "Lots Invendus": [],
+        "Lots Vendus": []
       },
       selectedCustomer: null,
       error: null,
@@ -71,10 +74,23 @@ export default {
         this.categorizedLots["Lots Enchéris"] = await DashboardService.getLotsBid(customerId);
         this.categorizedLots["Lots Mis en Vente"] = await DashboardService.getLotsForSale(customerId);
         this.categorizedLots["Lots Affectés"] = await DashboardService.getLotsAffected(customerId);
-        this.categorizedLots["Lots Invendus"] = (await DashboardService.getLotsOwned(customerId)).filter(lot => !lot.active && !lot.highestBid);
+        this.categorizedLots["Lots Invendus"] = (await DashboardService.getLotsOwned(customerId)).filter(lot => lot.status === 'inactive');
+        this.categorizedLots["Lots Vendus"] = await DashboardService.getLotsVendues(customerId);
       } catch (error) {
         this.displayMessage('error', "Erreur lors du chargement des lots.");
       }
+    },
+    async confirmPayment(encodedId) {
+      try {
+        await DashboardService.confirmPayment(encodedId, this.selectedCustomer.id);
+        this.displayMessage('success', "Paiement confirmé.");
+        await this.fetchDashboardData();
+      } catch (error) {
+        this.displayMessage('error', "Erreur lors de la confirmation du paiement.");
+      }
+    },
+    refreshDashboard() {
+      this.fetchDashboardData();
     }
   },
   async mounted() {
@@ -87,13 +103,12 @@ export default {
   }
 };
 </script>
-
 <style scoped>
 .dashboard-background {
   width: 100%;
   padding: 20px 0;
-  background: #f0f4f8;
-  color: #333;
+  background: #a0c4ff;
+  background: linear-gradient(to bottom right, #3498db, #bdc3c7);
   min-height: 100vh;
 }
 

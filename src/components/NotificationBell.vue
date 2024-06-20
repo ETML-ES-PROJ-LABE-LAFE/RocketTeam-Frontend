@@ -9,7 +9,6 @@
         <div class="notification-content">
           <p class="message">{{ getNotificationMessage(notification) }}</p>
           <p v-if="notification.message.includes('a trouvé un acheteur')" class="amount">Montant de l'enchère la plus haute: {{ notification.bidAmount }} €</p>
-          <p class="timestamp">{{ timeAgo(notification.timestamp) }}</p>
           <button v-if="notification.message.includes('Vous avez remporté l\'enchère')" @click.stop="redirectToDashboard(notification.id)" class="pay-button">Payer</button>
         </div>
       </div>

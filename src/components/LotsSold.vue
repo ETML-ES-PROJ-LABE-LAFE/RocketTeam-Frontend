@@ -1,26 +1,22 @@
 <template>
   <div>
-    <h2>Lots Affectés</h2>
+    <h2>Lots Vendus</h2>
     <div class="lot-container">
       <div class="lot-card" v-for="lot in lots" :key="lot.id">
         <h3>{{ lot.title }}</h3>
         <p>{{ lot.description }}</p>
         <p><strong>État:</strong> {{ lot.status }}</p>
-        <button @click="handleAction(lot)">Action</button>
+        <p><strong>Montant de l'enchère:</strong> {{ lot.highestBid }}</p>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+
 export default {
   name: 'LotsSold',
   props: ['lots'],
-  methods: {
-    handleAction(lot) {
-      alert(`Action pour le lot: ${lot.title}`);
-    }
-  }
 };
 </script>
 
@@ -48,19 +44,5 @@ export default {
 
 .lot-card p {
   color: #34495e;
-}
-
-.lot-card button {
-  background: #3498db;
-  color: #fff;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.lot-card button:hover {
-  background: #2980b9;
 }
 </style>

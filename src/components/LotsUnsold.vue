@@ -6,7 +6,6 @@
         <h3>{{ lot.title }}</h3>
         <p>{{ lot.description }}</p>
         <p><strong>État:</strong> {{ lot.status }}</p>
-        <button @click="handleAction(lot)">Action</button>
       </div>
     </div>
   </div>
@@ -16,11 +15,6 @@
 export default {
   name: 'LotsUnsold',
   props: ['lots'],
-  methods: {
-    handleAction(lot) {
-      alert(`Action pour le lot: ${lot.title}`);
-    }
-  }
 };
 </script>
 
@@ -50,17 +44,5 @@ export default {
   color: #34495e;
 }
 
-.lot-card button {
-  background: #3498db;
-  color: #fff;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
 
-.lot-card button:hover {
-  background: #2980b9;
-}
 </style>
