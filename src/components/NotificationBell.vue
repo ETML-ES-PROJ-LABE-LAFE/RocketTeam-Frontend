@@ -54,7 +54,7 @@ export default {
     async handleNotificationClick(notification) {
       await this.markNotificationAsRead(notification.id);
       await this.deleteNotification(notification.id);
-      // Mettre à jour les notifications locales pour qu'elles disparaissent de l'affichage
+
       const index = this.notifications.findIndex(n => n.id === notification.id);
       if (index !== -1) {
         this.notifications.splice(index, 1);

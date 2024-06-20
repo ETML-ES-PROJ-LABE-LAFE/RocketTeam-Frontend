@@ -68,7 +68,7 @@ export default {
       if (confirm("Êtes-vous sûr de vouloir terminer les enchères pour ce lot?")) {
         try {
           await LotsService.endAuction(lotId);
-          this.$emit('refresh-lots'); // Emit the refresh event after ending auction
+          this.$emit('refresh-lots');
         } catch (error) {
           console.error("Erreur lors de la fin des enchères :", error);
         }

@@ -21,7 +21,7 @@ class CustomersServices {
         if (customer) {
             customer.balance = Number(customer.balance);
             customer.reservedBalance = Number(customer.reservedBalance);
-            customer.originalBalance = Number(customer.originalBalance || customer.balance); // Initialiser originalBalance si nécessaire
+            customer.originalBalance = Number(customer.originalBalance || customer.balance);
         }
         return customer;
     }
