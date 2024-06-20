@@ -48,7 +48,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
-  const currentUser = JSON.parse(localStorage.getItem('selectedUser')); // Obtention de l'utilisateur depuis le localStorage
+  const currentUser = JSON.parse(localStorage.getItem('selectedUser'));
   if (requiresAuth && !currentUser) {
     next('/');
   } else {

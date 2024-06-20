@@ -15,7 +15,7 @@ export default {
 .about {
   font-family: 'Arial', sans-serif;
   padding: 10px 20px;
-  text-align: center; /* Centrage horizontal du texte */
+  text-align: center;
   min-height: 100vh;
   background: linear-gradient(to bottom right, #3498db, #bdc3c7);
   color: white;
@@ -25,14 +25,14 @@ h1 {
   color: black;
   font-size: 2.5em;
   margin-bottom: 20px;
-  margin-top: 40px; /* Ajout d'une marge supérieure pour espacer du haut */
+  margin-top: 40px;
 }
 
 p {
   color: black;
   font-size: 1.2em;
   max-width: 800px;
-  margin: 0 auto; /* Centrage horizontal */
-  text-align: center; /* Centrage du texte */
+  margin: 0 auto;
+  text-align: center;
 }
 </style>
